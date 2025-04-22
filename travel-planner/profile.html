@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelPlanner | Мій профіль</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/profile.css">
+</head>
+<body>
+  <!-- Анімований фон -->
+  <div class="particles-bg"></div>
+
+  <!-- Шапка -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-map-marked-alt"></i> <span>TravelPlanner</span>
+      </a>
+      <nav>
+        <a href="itinerary.html" class="nav-link"><i class="fas fa-route"></i> Планувальник</a>
+        <a href="profile.html" class="nav-link"><i class="fas fa-user"></i> Профіль</a>
+        <button id="auth-btn" class="auth-btn pulse">
+          <i class="fas fa-sign-in-alt"></i> <span>Увійти</span>
+        </button>
+      </nav>
+      <button class="mobile-menu-btn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Контейнер профілю -->
+  <div class="profile-container">
+    <!-- Шапка профілю -->
+    <header class="profile-header">
+      <div class="cover-photo" style="background-image: url('assets/images/profile-cover.jpg')"></div>
+      <div class="profile-info">
+        <div class="avatar-container">
+          <div class="avatar" style="background-image: url('assets/images/user-avatar.jpg')">
+            <button class="edit-avatar-btn">
+              <i class="fas fa-camera"></i>
+            </button>
+          </div>
+        </div>
+        <div class="user-meta">
+          <h1>Your Name</h1>
+          <p class="location"><i class="fas fa-map-marker-alt"></i> Київ, Україна</p>
+          <div class="stats">
+            <div class="stat-item">
+              <span class="stat-number">24</span>
+              <span class="stat-label">маршрути</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">127</span>
+              <span class="stat-label">місця</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">8</span>
+              <span class="stat-label">країни</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Основна частина -->
+    <main class="profile-content">
+      <nav class="profile-tabs">
+        <button class="tab-btn active" data-tab="trips">
+          <i class="fas fa-route"></i> Мої подорожі
+        </button>
+        <button class="tab-btn" data-tab="saved">
+          <i class="fas fa-bookmark"></i> Збережені
+        </button>
+        <button class="tab-btn" data-tab="settings">
+          <i class="fas fa-cog"></i> Налаштування
+        </button>
+      </nav>
+
+      <div class="tab-content active" id="trips-tab">
+        <div class="trips-grid">
+          <div class="trip-card">
+            <div class="trip-image" style="background-image: url('assets/images/kyiv-route.jpg')">
+              <span class="trip-badge">Завершено</span>
+              <div class="trip-actions">
+                <button class="icon-btn"><i class="fas fa-share-alt"></i></button>
+                <button class="icon-btn"><i class="fas fa-edit"></i></button>
+              </div>
+            </div>
+            <div class="trip-details">
+              <h3>Архітектурний Київ</h3>
+              <div class="trip-meta">
+                <span><i class="fas fa-calendar-alt"></i> 12-14 травня 2023</span>
+                <span><i class="fas fa-map-marker-alt"></i> 8 місць</span>
+              </div>
+              <div class="trip-footer">
+                <div class="rating">
+                  <i class="fas fa-star"></i>
+                  <span>4.8</span>
+                </div>
+                <button class="btn-outline">
+                  <i class="fas fa-eye"></i> Переглянути
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="saved-tab">
+        <!-- Збережені місця -->
+      </div>
+
+      <div class="tab-content" id="settings-tab">
+        <form class="settings-form">
+          <div class="form-group">
+            <label for="username">Ім'я користувача</label>
+            <input type="text" id="username" value="Олександра Коваленко">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" value="sasha@example.com">
+          </div>
+          <div class="form-group">
+            <label for="location">Місцезнаходження</label>
+            <input type="text" id="location" value="Київ, Україна">
+          </div>
+          <!-- Інші поля -->
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Модальне вікно авторизації -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-modal">&times;</span>
+      <h2>Увійти до TravelPlanner</h2>
+      <form>
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Пароль">
+        <button type="submit" class="cta-button">Увійти</button>
+      </form>
+    </div>
+  </div>
+    <!-- Вміст модального вікна буде додано через auth.js -->
+  </div>
+
+  <!-- Скрипти -->
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/animations.js"></script>
+  <script src="assets/js/profile.js"></script>
+</body>
+</html>

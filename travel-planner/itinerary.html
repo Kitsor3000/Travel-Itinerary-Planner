@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelPlanner | Планувальник маршруту</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4A6FA5;
+      --secondary: #6B8C42;
+      --accent: #FF7E5F;
+      --light: #F8F4E9;
+      --dark: #2D3A3A;
+      --soft-blue: #E1E8F0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: var(--light);
+      color: var(--dark);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    /* Бічна панель */
+    .sidebar {
+      width: 350px;
+      background: white;
+      border-right: 1px solid var(--soft-blue);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--soft-blue);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--soft-blue);
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Пошук місць */
+    .search-container {
+      padding: 15px;
+      border-bottom: 1px solid var(--soft-blue);
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    #place-search {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid var(--soft-blue);
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    #place-search:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .search-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .search-btn:hover {
+      background: var(--secondary);
+    }
+
+    /* Дні подорожі */
+    .days-tabs {
+      display: flex;
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--soft-blue);
+      overflow-x: auto;
+    }
+
+    .day-tab {
+      padding: 8px 15px;
+      background: var(--soft-blue);
+      border-radius: 20px;
+      margin-right: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .day-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .add-day-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    /* Список місць */
+    .places-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .place-card {
+      background: white;
+      border: 1px solid var(--soft-blue);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      cursor: move;
+      transition: all 0.2s;
+    }
+
+    .place-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .place-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--soft-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      color: var(--primary);
+    }
+
+    .place-info {
+      flex: 1;
+    }
+
+    .place-name {
+      font-weight: 500;
+      margin: 0 0 3px 0;
+    }
+
+    .place-address {
+      font-size: 0.8rem;
+      color: #666;
+      margin: 0;
+    }
+
+    .place-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    /* Мапа */
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    /* Адаптивність */
+    @media (max-width: 768px) {
+      .app-container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        height: 40vh;
+      }
+      
+      #map {
+        height: 60vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Хедер -->
+<header style="background: white; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--soft-blue); box-shadow: 0 1px 5px rgba(0,0,0,0.05);">
+
+  <nav style="display: flex; gap: 20px;">
+    <a href="index.html" style="text-decoration: none; color: var(--dark); font-weight: 500;">Головна</a>
+    <a href="profile.html" style="text-decoration: none; color: var(--dark); font-weight: 500;">Профіль</a>
+  </nav>
+
+  <div>
+    <button style="background: var(--primary); color: white; padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500;">
+      Увійти
+    </button>
+  </div>
+</header>
+
+  
+  <div class="app-container">
+    <!-- Бічна панель -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <i class="fas fa-route"></i>
+          <span>Мій маршрут</span>
+        </div>
+        <div class="action-buttons">
+          <button class="icon-btn" title="Зберегти">
+            <i class="fas fa-save"></i>
+          </button>
+          <button class="icon-btn" title="Очистити">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Пошук місць -->
+      <div class="search-container">
+        <div class="search-box">
+          <input type="text" id="place-search" placeholder="Додати місце...">
+          <button class="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Дні подорожі -->
+      <div class="days-tabs">
+        <div class="day-tab active">День 1</div>
+        <button class="add-day-btn">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+
+      <!-- Список місць -->
+      <div class="places-list">
+        <div class="empty-state">
+          <i class="fas fa-map-marker-alt"></i>
+          <p>Додайте місця до маршруту</p>
+        </div>
+        
+        <!-- Приклад місця -->
+        <div class="place-card" draggable="true">
+          <div class="place-icon">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <div class="place-info">
+            <h4 class="place-name">Ресторан "Львівський шлях"</h4>
+            <p class="place-address">вул. Шевченка, 12</p>
+          </div>
+          <div class="place-actions">
+            <button class="icon-btn small">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Мапа -->
+    <div id="map"></div>
+  </div>
+
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjydLRQWQtNEODpvYWHxzGwmoTo2vCWcs&libraries=places&callback=initMap" async defer></script>
+  
+  <script>
+    let map;
+    let markers = [];
+    let directionsService;
+    let directionsRenderer;
+    let placesService;
+
+    function initMap() {
+      // Ініціалізація мапи
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 50.4501, lng: 30.5234 }, // Київ
+        zoom: 13,
+        styles: [
+          {
+            "featureType": "poi",
+            "stylers": [{ "visibility": "off" }]
+          }
+        ]
+      });
+
+      // Сервіси для маршрутів
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true
+      });
+
+      // Пошук місць
+      const searchBox = new google.maps.places.SearchBox(
+        document.getElementById('place-search')
+      );
+
+      // Обробка вибору місця
+      searchBox.addListener('places_changed', () => {
+        const places = searchBox.getPlaces();
+        if (places.length === 0) return;
+        
+        addPlaceToItinerary(places[0]);
+      });
+
+      // Кнопка пошуку
+      document.querySelector('.search-btn').addEventListener('click', () => {
+        const query = document.getElementById('place-search').value;
+        if (query) {
+          searchPlaces(query);
+        }
+      });
+    }
+
+    // Додавання місця до маршруту
+    function addPlaceToItinerary(place) {
+      // Створення маркера
+      const marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location,
+        title: place.name
+      });
+      markers.push(marker);
+
+      // Додавання до списку
+      const placeCard = document.createElement('div');
+      placeCard.className = 'place-card';
+      placeCard.draggable = true;
+      placeCard.innerHTML = `
+        <div class="place-icon">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="place-info">
+          <h4 class="place-name">${place.name}</h4>
+          <p class="place-address">${place.vicinity || ''}</p>
+        </div>
+        <div class="place-actions">
+          <button class="icon-btn small">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+      `;
+      
+      document.querySelector('.places-list').appendChild(placeCard);
+      document.getElementById('place-search').value = '';
+    }
+
+    // Пошук місць
+    function searchPlaces(query) {
+      const request = {
+        query: query,
+        fields: ['name', 'geometry', 'formatted_address'],
+        location: map.getCenter(),
+        radius: 5000
+      };
+
+      const service = new google.maps.places.PlacesService(map);
+      service.textSearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results[0]) {
+          addPlaceToItinerary(results[0]);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
