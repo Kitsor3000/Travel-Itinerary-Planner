@@ -69,12 +69,7 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
     fetchNearbyPlaces();
   }, []);
 
-  //   useEffect(() => {
-  //     if (!selectedPlace) {
-  //         console.log("No hotel selected");
-  //         navigate("/");
-  //     }
-  //   }, [selectedPlace]);
+  
 
   const containerStyle = {
     width: "100%",
@@ -341,9 +336,3 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
 
 export default PlacesDetails;
 
-
-// place-details
-// map-location-place
-// place-map
-// nearby-locations
-// location-list

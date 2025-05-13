@@ -5,8 +5,6 @@ import PlaceCards from "../Cards/PlaceCards";
 import { useRefContext } from "@/Context/RefContext/RefContext";
 
 function Placescard() {
-  // const isMobile = useMediaQuery({ query: "(max-width: 445px)" });
-  // const isSmall = useMediaQuery({ query: "(max-width: 640px)" });
 
   const { trip } = useContext(LogInContext);
   const itinerary = trip?.tripData?.itinerary;

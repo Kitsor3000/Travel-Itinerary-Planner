@@ -81,21 +81,7 @@ function CreateTrip({createTripPageRef}) {
     localStorage.setItem("Trip", JSON.stringify(TripData));
     localStorage.setItem("UserSelection", JSON.stringify(formData));
 
-  //   const toDownload = {
-  //     userSelection: formData,
-  //     tripData: TripData,
-  //   }
-
-  // const fileData = new Blob([JSON.stringify(toDownload, null, 2)], { type: 'application/json' });
-  // const url = URL.createObjectURL(fileData);
-  // const link = document.createElement('a');
-  // link.href = url;
-  // link.download = `Trip_${id}.json`;
-  // document.body.appendChild(link);
-  // link.click();
-  // document.body.removeChild(link);
-  // URL.revokeObjectURL(url);
-
+  
 
     navigate("/my-trips/" + id);
   };
@@ -226,29 +212,8 @@ function CreateTrip({createTripPageRef}) {
             required
             onChange={(budget) => handleInputChange("Budget", Number(budget.target.value))}
           />
-            {/* {SelectBudgetOptions.map((item) => {
-              return (
-                <div
-                  onClick={(e) => handleInputChange("Budget", item.title)}
-                  key={item.id}
-                  className={`option cursor-pointer transition-all hover:scale-110 p-4 h-32 flex items-center justify-center flex-col border hover:shadow-foreground/10 hover:shadow-md rounded-lg
-                  ${
-                    formData?.Budget == item.title &&
-                    "border border-foreground/80"
-                  }
-                  `}
-                >
-                  <h3 className="font-bold text-[15px] md:font-[18px]">
-                    {item.icon} <span className={`
-                      ${formData?.Budget == item.title ? 
-                      "bg-gradient-to-b from-blue-400 to-blue-700 bg-clip-text text-center text-transparent" :
-                      ""}
-                      `}>{item.title}</span>
-                  </h3>
-                  <p className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">{item.desc}</p>
-                </div>
-              );
-            })} */}
+           
+          
           {/* </div> */}
         </div>
 
