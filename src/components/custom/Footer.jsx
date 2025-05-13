@@ -53,7 +53,7 @@ function Footer({ footerRef }) {
         })}
       </div> }
       { <div className="more text-sm text-center mt-5 bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-     __________________________________
+   
       </div> }
     </div>
   );
