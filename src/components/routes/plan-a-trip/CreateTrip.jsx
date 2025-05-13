@@ -30,7 +30,7 @@ import ReactGoogleAutocomplete from "react-google-autocomplete";
 
 function CreateTrip({createTripPageRef}) {
   const [place, setPlace] = useState("");
-  const [formData, setFormData] = useState([]);
+  const [formData, setFormData] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -175,8 +175,7 @@ function CreateTrip({createTripPageRef}) {
             🏖️
           </h2>
 
-{/* This is working */}
-{/* check which place is working or not */}
+
 <Autocomplete
   apiKey={import.meta.env.VITE_GOOGLE_MAP_API_KEY}
   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-center"
@@ -204,7 +203,7 @@ function CreateTrip({createTripPageRef}) {
             max="5"
             name="noOfDays"
             required
-            onChange={(day) => handleInputChange("noOfDays", day.target.value)}
+            onChange={(day) => handleInputChange("noOfDays", Number(day.target.value))}
           />
         </div>
 
@@ -223,9 +222,9 @@ function CreateTrip({createTripPageRef}) {
             type="number"
             min="100"
             max="100000"
-            // name="noOfDays"
+            name="Budget"
             required
-            onChange={(budget) => handleInputChange("Budget", budget.target.value)}
+            onChange={(budget) => handleInputChange("Budget", Number(budget.target.value))}
           />
             {/* {SelectBudgetOptions.map((item) => {
               return (
@@ -321,7 +320,7 @@ function CreateTrip({createTripPageRef}) {
                   onClick={SignIn}
                   className="w-full mt-5 flex gap-2 items-center justify-center"
                 >
-                  Sign In with <FcGoogle className="h-5 w-5" />
+                  Увійти за допомогою <FcGoogle className="h-5 w-5" />
                 </Button>
               )}
             </DialogDescription>
@@ -329,7 +328,7 @@ function CreateTrip({createTripPageRef}) {
           <DialogFooter>
             <DialogClose className="w-full">
               <Button variant="outline" className="w-full">
-                Close
+                Закрити
               </Button>
             </DialogClose>
           </DialogFooter>
