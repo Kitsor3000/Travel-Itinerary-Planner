@@ -76,52 +76,6 @@ function Hero({ heroRef }) {
     },
   ];
 
-  // Trip Stats
-// const getTotals = async () => {
-//   try {
-//     const db = getFirestore();
-
-//     const tripsRef = collection(db, "Trips");
-//     const usersRef = collection(db, "Users");
-
-//     const tripsSnapshot = await getDocs(tripsRef);
-//     const totalTrips = tripsSnapshot.size;
-
-//     const usersSnapshot = await getDocs(usersRef);
-//     const totalUsers = usersSnapshot.size;
-//     const usersArray = usersSnapshot.docs.map(doc => doc.data());
-//     console.log("Users:", usersArray);
-
-//     return { totalTrips, totalUsers };
-//   } catch (error) {
-//     console.error("Error fetching totals: ", error);
-//     throw error;
-//   }
-// };
-// const [loading, setLoading] = useState(true);
-// const [trips, setTrips] = useState(0);
-// const [users, setUsers] = useState(0);
-// useEffect(() => {
-//   getTotals()
-//     .then(({ totalTrips, totalUsers, usersArray }) => {
-//       setTrips(totalTrips);
-//       setUsers(totalUsers);
-//       console.log("total Trips", totalTrips);
-//       console.log("total Users", totalUsers);
-//     })
-//     .then(() => setLoading(false))
-//     .catch((error) => console.error("Failed to fetch totals", error));
-// }, []);
-// if (loading) {
-//   return (
-//     <div className="flex items-center flex-col text-center justify-center h-[70vh]">
-//       <div className="text px-10 md:px-40 flex flex-col items-center justify-center gap-4">
-//         <h1><AiOutlineLoading3Quarters size={80} className="animate-spin" /></h1>
-//       </div>
-//     </div>
-//   );
-// }
-
 
   const first = images.slice(0, images.length / 2);
   const second = images.slice(images.length / 2);
@@ -130,7 +84,7 @@ function Hero({ heroRef }) {
     <div
       ref={heroRef}
       className="flex items-center flex-col text-center justify-center min-h-screen py-10"
-    >
+    > 
       <div className="text px-10 md:px-40 flex flex-col items-center justify-center gap-4">
         <div className="heading p-2 md:py-5">
           <h1 className="font-black text-3xl md:text-5xl bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
@@ -179,6 +133,8 @@ function Hero({ heroRef }) {
           </Marquee>
           <Marquee pauseOnHover className="[--duration:60s]">
             {first.map((item, index) => {
+
+
               return (
                 <Link
                   key={index}
@@ -209,57 +165,3 @@ function Hero({ heroRef }) {
 }
 
 export default Hero;
-
-// Trip Stats
-// const getTotals = async () => {
-//   try {
-//     const db = getFirestore();
-
-//     const tripsRef = collection(db, "Trips");
-//     const usersRef = collection(db, "Users");
-
-//     const tripsSnapshot = await getDocs(tripsRef);
-//     const totalTrips = tripsSnapshot.size;
-
-//     const usersSnapshot = await getDocs(usersRef);
-//     const totalUsers = usersSnapshot.size;
-
-//     return { totalTrips, totalUsers };
-//   } catch (error) {
-//     console.error("Error fetching totals: ", error);
-//     throw error;
-//   }
-// };
-// const [loading, setLoading] = useState(true);
-// const [trips, setTrips] = useState(0);
-// const [users, setUsers] = useState(0);
-// useEffect(() => {
-//   getTotals()
-//     .then(({ totalTrips, totalUsers, usersArray }) => {
-//       setTrips(totalTrips);
-//       setUsers(totalUsers);
-//     })
-//     .then(() => setLoading(false))
-//     .catch((error) => console.error("Failed to fetch totals", error));
-// }, []);
-// if (loading) {
-//   return (
-//     <div className="flex items-center flex-col text-center justify-center h-[70vh]">
-//       <div className="text px-10 md:px-40 flex flex-col items-center justify-center gap-4">
-//         <h1><AiOutlineLoading3Quarters size={80} className="animate-spin" /></h1>
-//       </div>
-//     </div>
-//   );
-// }
-{
-  /*<br />
-          <div className="stats">
-            <h3 className="scroll-m-20 text-xl font-bold tracking-tight">
-              Current Stats
-            </h3>
-            <div className="nums flex flex-col sm:flex-row sm:w-full items-center justify-center gap-4">
-              <Stats text={"Users Registered"} value={users} />
-              <Stats text={"Trips Generated"} value={trips} />
-            </div>
-          </div>*/
-}
