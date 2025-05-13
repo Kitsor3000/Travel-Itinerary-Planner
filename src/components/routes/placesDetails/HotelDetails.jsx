@@ -73,12 +73,6 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     fetchNearbyPlaces();
   }, []);
 
-  //   useEffect(() => {
-  //     if (!selectedHotel) {
-  //         console.log("No hotel selected");
-  //         navigate("/");
-  //     }
-  //   }, [selectedHotel]);
 
   function generateMakeMyTripHotelURL({
     checkinDate, // format: 'YYYY-MM-DD'
@@ -90,14 +84,7 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     children = 0,
     rooms = 1,
   }) {
-    // // Convert YYYY-MM-DD to DDMMYYYY
-    // const formatDate = (dateStr) => {
-    //   const [y, m, d] = dateStr.split('-');
-    //   return `${d}${m}${y}`;
-    // };
-
-    // const checkin = formatDate(checkinDate);
-    // const checkout = formatDate(checkoutDate);
+   
     const encodedPOI = encodeURIComponent(poiName);
     console.log("Encoded POI:", encodedPOI);
 
@@ -388,8 +375,3 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
 
 export default HotelDetails;
 
-// hotel-details
-// map-location
-// hotel-map
-// nearby-places
-// places-list
