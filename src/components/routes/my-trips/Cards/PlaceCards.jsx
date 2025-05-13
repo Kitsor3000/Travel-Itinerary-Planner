@@ -120,16 +120,16 @@ function PlaceCards({ place }) {
           <CardContent className="w-full">
             <div className="places-details">
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide">
-                🕒 Timings: {place.timings}{" "}
+                🕒 Час роботи: {place.timings}{" "}
               </span>
               <br />
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide">
-                💵 Price:
+                💵 Ціна:
                 {place.pricing}{" "}
               </span>{" "}
               <br />
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide line-clamp-1">
-                📍 Location: {address ? address : place.address}
+                📍 Місце: {address ? address : place.address}
               </span>
             </div>
           </CardContent>

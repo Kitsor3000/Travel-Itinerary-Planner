@@ -121,15 +121,15 @@ function HotelCards({ hotel }) {
           <CardContent className="w-full">
             <div className="hotel-details">
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide">
-                ⭐ Rating: {rating}
+                ⭐ Рейтинг: {rating}
               </span>{" "}
               <br />
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide">
-                💵 Price: {hotel.price}
+                💵 Ціна: {hotel.price}
               </span>{" "}
               <br />
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide line-clamp-1">
-                📍 Location: {address ? address : hotel.address}
+                📍 Місце: {address ? address : hotel.address}
               </span>
             </div>
           </CardContent>

@@ -24,33 +24,33 @@ function Locationinfo() {
   const [allImages, setAllImages] = useState([]);
 
   const compliments = [
-    "Indeed, a great choice!",
-    "Hmm, this is one of the best places—spot on!",
-    "Oh, absolutely! That's an excellent pick.",
-    "I see you have a knack for picking the best.",
-    "Ah, this is top-notch. You've got great taste!",
-    "Can't argue with that—brilliant choice!",
-    "Wow, you always know how to pick the perfect one.",
-    "Hmm, I couldn't agree more—this is fantastic.",
-    "This is a fantastic pick, you've got a great eye!",
-    "Excellent choice, you nailed it!",
-    "You've got a real talent for choosing the best.",
-    "Spot on! This is exactly what I would have picked.",
-    "Great minds think alike—what a selection!",
-    "You've got an excellent sense for this.",
-    "This is an amazing choice, very impressive!",
-    "I see you've done your research—top choice.",
-    "That's a choice I can definitely get behind.",
-    "You have a knack for picking winners!",
-    "This is a great find—well done!",
-    "I couldn't have chosen better myself!",
-    "Such a great pick, you really know your stuff.",
-    "A fantastic choice, you've got style!",
-    "That's a smart decision, I'm impressed!",
-    "You have great taste, that's for sure.",
-    "This was an obvious winner—great pick!",
-    "Wow, this is just perfect—well chosen!",
-    "That's a choice full of wisdom and class.",
+"Справді чудовий вибір!",
+"Хм, це одне з найкращих місць — влучний вибір!",
+"О, безперечно! Це відмінний вибір.",
+"Бачу, ти маєш талант обирати найкраще.",
+"Ах, це вищий клас. У тебе відмінний смак!",
+"Не посперечаєшся — геніальний вибір!",
+"Вау, ти завжди знаєш, як обрати ідеальне.",
+"Хм, не можу не погодитися — це фантастично.",
+"Це чудовий вибір, у тебе влучне око!",
+"Відмінний вибір, ти влучив у саме яблучко!",
+"Ти справжній талант у виборі найкращого.",
+"Точно в ціль! Саме це я б і обрав.",
+"Великі уми думають однаково — який вибір!",
+"У тебе відчуття стилю — це точно.",
+"Це вражаючий вибір, дуже круто!",
+"Бачу, ти провів гарне дослідження — топовий вибір.",
+"Цей вибір я повністю підтримую.",
+"Ти маєш хист обирати переможців!",
+"Це чудова знахідка — молодець!",
+"Я б і сам не зміг вибрати краще!",
+"Який чудовий вибір, ти справді розумієшся на цьому.",
+"Фантастичний вибір, у тебе є стиль!",
+"Це розумне рішення, я вражений!",
+"У тебе відмінний смак, це факт.",
+"Це був очевидний переможець — чудовий вибір!",
+"Вау, це просто ідеально — гарно підібрано!",
+"Це вибір, сповнений мудрості та класу.",
   ];
 
   const randomCompliment =
@@ -155,7 +155,7 @@ function Locationinfo() {
     <div ref={locationInfoRef} className="my-1 md:my-5">
       <div className="location text text-center mb-10">
         <h2 className="text-3xl md:text-5xl font-bold mb-2">
-          <span className="bg-gradient-to-b from-blue-400 to-blue-700 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-b from-yellow-400 to-orange-500 bg-clip-text text-transparent">
             {city}{" "}
           </span>{" "}
         </h2>
@@ -210,7 +210,7 @@ function Locationinfo() {
           👨‍👩‍👧‍👦 {trip?.userSelection?.People}
         </h3>
         <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-          📆 {trip?.userSelection?.noOfDays} Day
+          📆 {trip?.userSelection?.noOfDays} Дні
         </h3>
       </div>
     </div>

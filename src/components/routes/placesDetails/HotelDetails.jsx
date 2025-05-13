@@ -221,7 +221,7 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
       <div className="hotel-details mt-5">
         <div className="text text-center">
           <h2 className="text-3xl md:text-5xl mt-5 font-bold flex items-center justify-center">
-            <span className="bg-gradient-to-b text-7xl from-blue-400 to-blue-700 bg-clip-text text-center text-transparent">
+            <span className="bg-gradient-to-b text-7xl from-yellow-400 to-orange-500 bg-clip-text text-center text-transparent">
               {name}
             </span>
           </h2>
@@ -236,13 +236,13 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
             💵 {price}
           </h3>
           <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-            ⭐ {rating} Stars
+            ⭐ {rating} Зірок
           </h3>
         </div>
       </div>
 
       <div className="map-location mt-5 w-full bg-gradient-to-b from-primary/90 to-primary/60 font-bold bg-clip-text text-transparent text-3xl text-center">
-        Map Location
+        Місце на мапі
       </div>
       <div className="hotel-map rounded-lg m-4 md:m-2 overflow-hidden shadow-md flex flex-col gap-2 md:flex-row">
         {!isLoaded ? (
@@ -318,12 +318,12 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
 
       <div className="mt-4 w-full">
         <h2 className="nearby-places mt-5 w-full bg-gradient-to-b from-primary/90 to-primary/60 font-bold bg-clip-text text-transparent text-3xl text-center">
-          Nearby Places
+          Місця поблизу
         </h2>
         {nearbyPlaces.length === 0 ? (
           <p className="text-sm text-gray-500 my-5 text-center">
             <Loader2 size={50} className="animate-spin w-full mt-5" />
-            Loading nearby places...
+            Завантаження місць поблизу...
           </p>
         ) : (
           <ul className="places-list space-y-2 grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 p-5 lg:grid-cols-4 mx-auto">
@@ -351,7 +351,7 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
                         # {index + 1}
                       </p>
                       <p className="text-sm text-foreground/90">
-                        Rating {place?.rating} ⭐
+                        Рейтинг {place?.rating} ⭐
                       </p>
                     </div>
                   </div>
