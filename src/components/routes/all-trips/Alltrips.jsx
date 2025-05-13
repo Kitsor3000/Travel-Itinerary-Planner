@@ -30,7 +30,7 @@ function Alltrips() {
   return (
     <div className="mb-10">
       <h1 className="text-3xl md:text-5xl font-bold text-center my-5 md:my-10 bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-        All Trips
+        Усі подорожі
       </h1>
       <div className="flex gap-3 flex-wrap justify-evenly items-center">
         {allTrips?.length > 0

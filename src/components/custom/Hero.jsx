@@ -147,9 +147,9 @@ function Hero({ heroRef }) {
         </div>
         <div className="buttons flex flex-col gap-3 md:flex-row">
           <Link to="/plan-a-trip">
-            <Button className="">
+            <Button className="text-lg sm:text-xl px-6 sm:px-8 py-3 sm:py-4 font-medium rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-black shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">
               {isAuthenticated
-                ? "Let's Make Another Trip"
+                ? "Створити подорож"
                 : "Розпочати"}
             </Button>
           </Link>
