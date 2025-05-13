@@ -148,30 +148,29 @@ function CreateTrip({createTripPageRef}) {
   };
 
   return (
-    <div ref={createTripPageRef} className="mt-10 text-center">
+    <div ref={createTripPageRef} className="mt-10 text-center ">
       <div className="text">
         <h2 className="text-3xl md:text-5xl font-bold mb-5 flex items-center justify-center">
           <span className="hidden md:block">🚀</span>{" "}
           <span className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-            Share Your Travel Preferences{" "}
+            Досліджуй світ{" "}
           </span>{" "}
           <span className="hidden md:block">🚀</span>
         </h2>
         <p className="opacity-90 mx-auto text-center text-md md:text-xl font-medium tracking-tight text-primary/80">
-          Embark on your dream adventure with just a few simple details. <br />
-          <span className="bg-gradient-to-b text-2xl from-blue-400 to-blue-700 bg-clip-text text-center text-transparent">
-            JourneyJolt
+          Створи подорож своєї мрії всього за декілька кліків. <br />
+          <span className="text-2xl bg-gradient-to-b from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            RoaMap
           </span>{" "}
-          <br /> will curate a personalized itinerary, crafted to match your
-          unique preferences!
+          <br /> Розробіть персональний маршрут з урахуванням ваших власних вподобань
         </p>
       </div>
 
       <div className="form mt-14 flex flex-col gap-16 md:gap-20 ">
         <div className="place">
-          <h2 className="font-semibold text-lg md:text-xl mb-3 ">
+          <h2 className="font-semibold text-lg md:text-3xl mb-3 ">
             <span className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-              Where do you want to Explore?
+              Де ви хочете побувати?
             </span>{" "}
             🏖️
           </h2>
@@ -191,15 +190,15 @@ function CreateTrip({createTripPageRef}) {
         </div>
 
         <div className="day">
-          <h2 className="font-semibold text-lg md:text-xl mb-3 ">
+          <h2 className="font-semibold text-lg md:text-3xl mb-3 ">
             <span className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-              How long is your Trip?
+              Скільки буде тривати ваша подорож?
             </span>{" "}
             🕜
           </h2>
           <Input
             className="text-center"
-            placeholder="Ex: 2"
+            placeholder="Кількість днів"
             type="number"
             min="1"
             max="5"
@@ -210,19 +209,19 @@ function CreateTrip({createTripPageRef}) {
         </div>
 
         <div className="budget">
-          <h2 className="font-semibold text-lg md:text-xl mb-3 ">
+          <h2 className="font-semibold text-lg md:text-3xl mb-3 ">
             <span className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
               {" "}
-              What is your Budget?
+              Яким буде ваш бюджет?
             </span>{" "}
             💳
           </h2>
           {/* <div className="options grid grid-cols-1 gap-5 md:grid-cols-3"> */}
           <Input
             className="text-center"
-            placeholder="₹ 5000"
+            placeholder="$ 5000"
             type="number"
-            min="1000"
+            min="100"
             max="100000"
             // name="noOfDays"
             required
@@ -255,9 +254,9 @@ function CreateTrip({createTripPageRef}) {
         </div>
 
         <div className="people">
-          <h2 className="font-semibold  text-lg md:text-xl mb-3 ">
+          <h2 className="font-semibold  text-lg md:text-3xl mb-3 ">
             <span className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-              Who are you traveling with?{" "}
+              З ким буде ваша подорож?{" "}
             </span>{" "}
             🚗
           </h2>
@@ -292,7 +291,7 @@ function CreateTrip({createTripPageRef}) {
           {isLoading ? (
             <AiOutlineLoading3Quarters className="h-6 w-6 animate-spin" />
           ) : (
-            "Let's Go 🌏"
+            "Підтвердити 🌏"
           )}
         </Button>
       </div>

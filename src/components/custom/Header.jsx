@@ -35,8 +35,8 @@ function Header({headerRef}) {
           <div className="img inline-block h-5 w-5 md:h-10 md:w-10">
             <img src="/logo.png" alt="" />
           </div>
-          <h1 className="text-lg md:text-3xl font-bold bg-gradient-to-b from-blue-400 to-blue-700 bg-clip-text text-transparent">
-            JourneyJolt
+          <h1 className="text-lg md:text-3xl font-bold bg-gradient-to-b from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            RoaMap
           </h1>
         </div>
       </Link>
@@ -60,20 +60,20 @@ function Header({headerRef}) {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="text-center sm:text-left w-56">
               <DropdownMenuLabel className="font-semibold text-xl flex items-center justify-start gap-2">
-                <User /> My Account
+                <User /> Мій аккаунт
               </DropdownMenuLabel>
 
               <DropdownMenuSeparator />
 
               <Link to="/all-trips" className="">
                 <DropdownMenuItem className="w-full cursor-pointer text-lg flex items-center justify-start gap-2">
-                  <Plane /> My Trips
+                  <Plane /> Мої подорожі
                 </DropdownMenuItem>
               </Link>
 
               <Link to="/plan-a-trip" className="">
                 <DropdownMenuItem className="w-full cursor-pointer text-lg flex items-center justify-start gap-2">
-                  <Plus /> Create Trip
+                  <Plus /> Створити подорож
                 </DropdownMenuItem>
               </Link>
 
@@ -85,14 +85,14 @@ function Header({headerRef}) {
                   className="w-full text-center"
                   onClick={LogOut}
                 >
-                  Log Out <LogOutIcon className="h-4" />
+                  Вийти <LogOutIcon className="h-4" />
                 </Button>
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Button onClick={LogIn}>
-            Sign In{" "}
+            Увійти{" "}
             <DropdownMenuShortcut>
               {" "}
               <LogInIcon className="h-4" />

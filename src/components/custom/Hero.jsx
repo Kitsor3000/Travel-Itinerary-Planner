@@ -134,15 +134,15 @@ function Hero({ heroRef }) {
       <div className="text px-10 md:px-40 flex flex-col items-center justify-center gap-4">
         <div className="heading p-2 md:py-5">
           <h1 className="font-black text-3xl md:text-5xl bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent">
-            Embark on Electrifying <br /> Adventures with
+            Travel Itinerary <br /> Planner
           </h1>
-          <h1 className="font-black text-5xl md:text-9xl bg-gradient-to-b from-blue-400 to-blue-700 bg-clip-text text-center text-transparent pb-4">
-            JourneyJolt
+          <h1 className="font-black text-5xl md:text-9xl bg-gradient-to-b from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            RoaMap
           </h1>
         </div>
         <div className="desc">
           <h5 className="opacity-90 mx-auto text-center text-lg font-medium tracking-tight text-primary/80 md:text-xl">
-            Your trusted trip planner and adventure guide.
+            Плануй свої подорожі зручно.
           </h5>
         </div>
         <div className="buttons flex flex-col gap-3 md:flex-row">
@@ -150,16 +150,9 @@ function Hero({ heroRef }) {
             <Button className="">
               {isAuthenticated
                 ? "Let's Make Another Trip"
-                : "Plan a Trip, It's Free"}
+                : "Розпочати"}
             </Button>
           </Link>
-          {/* <Link
-            target="_blank"
-            rel="noopener noreferrer"
-            to="https://www.buymeacoffee.com/satendra03"
-          >
-            <Button variant="secondary">Buy Me a Coffee</Button>
-          </Link> */}
         </div>
         <div className="marquee relative flex w-[75vw] flex-col items-center justify-center overflow-hidden rounded-lg bg-background">
           <Marquee reverse pauseOnHover className="[--duration:60s]">
