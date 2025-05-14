@@ -316,59 +316,7 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
         </>
       )}
 
-      <div className="mt-4 w-full">
-        <h2 className="nearby-places mt-5 w-full bg-gradient-to-b from-primary/90 to-primary/60 font-bold bg-clip-text text-transparent text-3xl text-center">
-          Місця поблизу
-        </h2>
-        {nearbyPlaces.length === 0 ? (
-          <p className="text-sm text-gray-500 my-5 text-center">
-            <Loader2 size={50} className="animate-spin w-full mt-5" />
-            Завантаження місць поблизу...
-          </p>
-        ) : (
-          <ul className="places-list space-y-2 grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 p-5 lg:grid-cols-4 mx-auto">
-            {nearbyPlaces.map((place, index) => (
-              <div
-                onClick={handleSelectPlace(place)}
-                className="max-w-xs relative w-full group/card border border-foreground/20 rounded-lg overflow-hidden shadow-md cursor-pointer"
-                key={index}
-              >
-                <div
-                  style={{ backgroundImage: `url(${getImage(place?.photos)})` }}
-                  className={cn(
-                    " cursor-pointer overflow-hidden relative card h-72 rounded-md shadow-xl  max-w-sm mx-auto backgroundImage flex flex-col justify-between p-4",
-                    `bg-cover`
-                  )}
-                >
-                  <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-background to-transparent z-0 pointer-events-none" />
-
-                  <div className="absolute w-full h-full top-0 left-0 transition duration-300 group-hover/card:bg-background opacity-60"></div>
-                  <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-background to-transparent z-0 pointer-events-none" />
-
-                  <div className="flex flex-row items-center space-x-4 z-10 ">
-                    <div className="flex flex-col">
-                      <p className="font-normal text-base text-foreground relative z-10">
-                        # {index + 1}
-                      </p>
-                      <p className="text-sm text-foreground/90">
-                        Рейтинг {place?.rating} ⭐
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text content">
-                    <h1 className="font-bold text-xl md:text-2xl text-foreground relative z-10 line-clamp-2">
-                      {place.name}
-                    </h1>
-                    <p className="font-normal text-sm text-foreground relative z-10 my-4 line-clamp-3">
-                      {place.address}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </ul>
-        )}
-      </div>
+     
     </div>
   );
 };

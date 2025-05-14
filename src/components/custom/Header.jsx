@@ -21,7 +21,7 @@ function Header({headerRef}) {
     logout();
   };
   const LogIn = () => {
-    // loginWithRedirect();
+    
     loginWithPopup();
   };
 
