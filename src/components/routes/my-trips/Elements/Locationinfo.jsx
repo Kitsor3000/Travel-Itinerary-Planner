@@ -111,16 +111,16 @@ function Locationinfo() {
         return { adults: 1, children: 0, rooms: 1 };
 
       case "2 People":
-        return { adults: 2, children: 0, rooms: 1 }; // assume 2 adults, no children
+        return { adults: 2, children: 0, rooms: 1 }; 
 
       case "3 to 5 People":
-        return { adults: 2, children: 2, rooms: 1 }; // assume average group of 4: 2 adults + 2 children
+        return { adults: 2, children: 2, rooms: 1 }; 
 
       case "5 to 10 People":
-        return { adults: 8, children: 0, rooms: 2 }; // assume 8 total: 8 adults + 0 children
+        return { adults: 8, children: 0, rooms: 2 }; 
 
       default:
-        return { adults: 2, children: 0, rooms: 1 }; // fallback default
+        return { adults: 2, children: 0, rooms: 1 }; 
     }
   }
 
@@ -164,7 +164,7 @@ function Locationinfo() {
         </p>
       </div>
       <div className="carousel img opacity-90 mx-auto text-center text-lg font-medium tracking-tight text-primary/80 md:text-lg">
-        Take a sneak peek at what's ahead!
+        Побачте більше того що вас чекає!
       </div>
       <Carousel className="carousel w-full ">
         <CarouselContent>
@@ -189,18 +189,8 @@ function Locationinfo() {
         <CarouselPrevious className="hidden md:flex" />
         <CarouselNext className="hidden md:flex" />
       </Carousel>
-      {/* <Link to={cityDets.googleMapsUri} className="cursor-pointer">
-        <img
-          src={Url || "/images/main_img_placeholder.jpg"}
-          className="w-full object-cover rounded-lg"
-          alt="place"
-        />
-      </Link> */}
       <h2 className="location-info md:mt-4 opacity-90 mx-auto text-center text-lg font-medium tracking-tight text-primary/80 md:text-xl">
-        Ah, these are your picks—looking great so far!
-        {/* <span className="bg-gradient-to-b from-blue-400 to-blue-700 bg-clip-text text-transparent">
-          Adventure
-        </span>{" "} */}
+        Ось ваш вибір, виглядає чудово!
       </h2>
       <div className="location-info flex items-center justify-center py-2 gap-2 mt-2">
         <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">

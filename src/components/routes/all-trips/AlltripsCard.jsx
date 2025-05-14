@@ -30,41 +30,46 @@ const AlltripsCard = ({ trip, onDelete, onClick }) => {
   }, [photos]);
 
   return (
-    <div
-      className="card-card border-foreground/20 p-1 h-full flex flex-col gap-3 relative cursor-pointer"
-      onClick={onClick}
-    >
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(trip.id);
-        }}
-        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 z-10"
-        title="Видалити подорож"
-      >
-        <Trash2 size={20} />
-      </button>
+   <div
+  onClick={onClick}
+  className="relative group cursor-pointer rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-background border border-border"
+>
+  {/* Кнопка видалення */}
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      onDelete(trip.id);
+    }}
+    className="absolute top-3 right-3 z-20 p-1.5 rounded-full bg-destructive/90 hover:bg-destructive text-white shadow-sm transition-all"
+    title="Видалити подорож"
+  >
+    <Trash2 size={18} />
+  </button>
 
-      <div className="img relative h-full rounded-lg overflow-hidden duration-500 group">
-        <img
-          src={Url || "/logo.png"}
-          className="h-56 w-full object-cover group-hover:scale-110 duration-500 transition-all"
-          alt={Url || "/logo.png"}
-        />
-        <div className="absolute inset-0 bg-background/90 flex flex-col items-center justify-center md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-          <span className="bg-gradient-to-b text-lg from-primary/90 to-primary/60 bg-clip-text text-transparent font-bold">
-            {trip.userSelection.location}
-          </span>
-          <span className="bg-gradient-to-b text-lg from-primary/90 to-primary/60 bg-clip-text text-transparent font-bold">
-            {trip.userSelection.noOfDays}{" "}
-            {trip.userSelection.noOfDays > 1 ? "Days" : "Day"}
-          </span>
-          <span className="bg-gradient-to-b text-lg from-primary/90 to-primary/60 bg-clip-text text-transparent font-bold">
-            {trip.userSelection.Budget} Budget
-          </span>
-        </div>
-      </div>
+  {/* Зображення міста */}
+  <div className="h-56 w-full overflow-hidden relative">
+    <img
+      src={Url || "/logo.png"}
+      alt={city}
+      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+    />
+
+    {/* Прозора інформація з анімацією */}
+    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center gap-1">
+      <p className="text-lg font-semibold text-white tracking-wide">
+        {trip.userSelection.location}
+      </p>
+      <p className="text-sm text-gray-200">
+        {trip.userSelection.noOfDays}{" "}
+        {trip.userSelection.noOfDays > 1 ? "днів" : "день"}
+      </p>
+      <p className="text-sm text-gray-200">
+        Бюджет: <span className="font-medium">{trip.userSelection.Budget}</span>
+      </p>
     </div>
+  </div>
+</div>
+
   );
 };
 

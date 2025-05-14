@@ -75,11 +75,11 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
 
 
   function generateMakeMyTripHotelURL({
-    checkinDate, // format: 'YYYY-MM-DD'
-    checkoutDate, // format: 'YYYY-MM-DD'
-    poiName, // e.g., 'Netaji Subhash Place Metro Station'
-    lat, // e.g., 28.69605
-    lng, // e.g., 77.15263
+    checkinDate, 
+    checkoutDate, 
+    poiName, 
+    lat, 
+    lng, 
     adults = 2,
     children = 0,
     rooms = 1,
@@ -262,11 +262,11 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
               }}
               icon={{
                 path: window.google.maps.SymbolPath.CIRCLE,
-                scale: 12, // size of the marker
-                fillColor: "#black", // your custom color
+                scale: 12, 
+                fillColor: "#black", 
                 fillOpacity: 1,
                 strokeWeight: 1,
-                strokeColor: "#ffffff", // border color
+                strokeColor: "#ffffff", 
               }}
               label="🏨"
             />
@@ -289,11 +289,11 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
                   }}
                   icon={{
                     path: window.google.maps.SymbolPath.CIRCLE,
-                    scale: 12, // size of the marker
-                    fillColor: "black", // your custom color
+                    scale: 12, 
+                    fillColor: "black", 
                     fillOpacity: 1,
                     strokeWeight: 1,
-                    strokeColor: "#ffffff", // border color
+                    strokeColor: "#ffffff", 
                   }}
                   label="📍"
                 />
