@@ -1,20 +1,8 @@
 import { Input } from "@/components/ui/input";
 import React, { useContext, useEffect, useState } from "react";
 import Autocomplete from "react-google-autocomplete";
-import {
-  PROMPT,
-  SelectBudgetOptions,
-  SelectNoOfPersons,
-} from "../../constants/Options";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { PROMPT, SelectBudgetOptions, SelectNoOfPersons } from "../../constants/Options";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
@@ -25,18 +13,43 @@ import { db } from "@/Service/Firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
-const AnimatedShapes = () => {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-      <div className="absolute top-20 left-0 w-40 h-40 rounded-full bg-orange-400/10 blur-md animate-float1"></div>
-      <div className="absolute top-1/4 right-0 w-60 h-60 rounded-full bg-orange-400/10 blur-md animate-float2"></div>
-      
-      <div className="absolute bottom-1/4 left-1/3 w-0 h-0 border-l-[80px] border-l-transparent border-b-[140px] border-b-yellow-400/5 border-r-[80px] border-r-transparent blur-md animate-spin-slow"></div>
-    
-      <div className="absolute bottom-1/3 right-1/5 w-60 h-60 bg-orange-400/5 blur-xl animate-pulse-slow rotate-45"></div>
-    </div>
-  );
-};
+class TripCreator {
+  constructor(db, user) {
+    this.db = db;
+    this.user = user;
+  }
+
+  async saveTrip(formData, tripData) {
+    const id = Date.now().toString();
+    await setDoc(doc(this.db, "Trips", id), {
+      tripId: id,
+      userSelection: formData,
+      tripData: tripData,
+      userName: this.user?.name,
+      userEmail: this.user?.email,
+    });
+    return id;
+  }
+
+  static generatePrompt(formData) {
+    return PROMPT.replace(/{location}/g, formData?.location)
+      .replace(/{noOfDays}/g, formData?.noOfDays)
+      .replace(/{People}/g, formData?.People)
+      .replace(/{Budget}/g, formData?.Budget);
+  }
+
+  static validateForm(formData) {
+    if (!formData?.noOfDays || !formData?.location || !formData?.People || !formData?.Budget) {
+      throw new Error("Будь ласка, заповніть всі поля.");
+    }
+    if (formData?.noOfDays > 5) {
+      throw new Error("Максимальна кількість днів - 5");
+    }
+    if (formData?.noOfDays < 1) {
+      throw new Error("Некоректна кількість днів");
+    }
+  }
+}
 
 function CreateTrip({createTripPageRef}) {
   const [place, setPlace] = useState("");
@@ -46,101 +59,46 @@ function CreateTrip({createTripPageRef}) {
   const navigate = useNavigate();
 
   const { user, loginWithPopup, isAuthenticated } = useContext(LogInContext);
+  const tripCreator = new TripCreator(db, user);
 
   const handleInputChange = (name, value) => {
-    setFormData((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const SignIn = async () => {
-    loginWithPopup();
-  };
-
-  const SaveUser = async () => {
-    const User = JSON.parse(localStorage.getItem("User"));
-    const id = User?.email;
-    await setDoc(doc(db, "Users", id), {
-      userName: User?.name,
-      userEmail: User?.email,
-      userPicture: User?.picture,
-      userNickname: User?.nickname,
-    });
-  };
-
-  useEffect(() => {
-    if (user && isAuthenticated) {
-      localStorage.setItem("User", JSON.stringify(user));
-      SaveUser();
-    }
-  }, [user]);
-
-  const SaveTrip = async (TripData) => {
-    const User = JSON.parse(localStorage.getItem("User"));
-    const id = Date.now().toString();
-    setIsLoading(true);
-    await setDoc(doc(db, "Trips", id), {
-      tripId: id,
-      userSelection: formData,
-      tripData: TripData,
-      userName: User?.name,
-      userEmail: User?.email,
-    });
-    setIsLoading(false);
-    localStorage.setItem("Trip", JSON.stringify(TripData));
-    localStorage.setItem("UserSelection", JSON.stringify(formData));
-
-    navigate("/my-trips/" + id);
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const generateTrip = async () => {
     if (!isAuthenticated) {
-      toast("Увійдіть щоб продовжити", {
-        icon: "⚠️",
-      });
+      toast("Увійдіть щоб продовжити", { icon: "⚠️" });
       return setIsDialogOpen(true);
     }
-    if (
-      !formData?.noOfDays ||
-      !formData?.location ||
-      !formData?.People ||
-      !formData?.Budget
-    ) {
-      return toast.error("Будь ласка, заповніть всі поля.");
-    }
-    if (formData?.noOfDays > 5) {
-      return toast.error("Максимальна кількість днів - 5");
-    }
-    if (formData?.noOfDays < 1) {
-      return toast.error("Некоректна кількість днів");
-    }
-    const FINAL_PROMPT = PROMPT.replace(/{location}/g, formData?.location)
-      .replace(/{noOfDays}/g, formData?.noOfDays)
-      .replace(/{People}/g, formData?.People)
-      .replace(/{Budget}/g, formData?.Budget);
 
     try {
-      const toastId = toast.loading("Створюємо подорож...", {
-        icon: "✈️",
-      });
-
+      TripCreator.validateForm(formData);
+      
+      const toastId = toast.loading("Створюємо подорож...", { icon: "✈️" });
       setIsLoading(true);
-      const result = await chatSession.sendMessage(FINAL_PROMPT);
+      
+      const result = await chatSession.sendMessage(TripCreator.generatePrompt(formData));
       const trip = JSON.parse(result.response.text());
+      
+      const tripId = await tripCreator.saveTrip(formData, trip);
+      
       setIsLoading(false);
-      SaveTrip(trip);
-
       toast.dismiss(toastId);
       toast.success("Подорож успішно створена!");
+      
+      localStorage.setItem("Trip", JSON.stringify(trip));
+      localStorage.setItem("UserSelection", JSON.stringify(formData));
+      navigate("/my-trips/" + tripId);
     } catch (error) {
       setIsLoading(false);
       toast.dismiss();
-      toast.error("Помилка при створенні подорожі. Спробуйте ще раз.");
+      toast.error(error.message);
       console.error(error);
     }
   };
 
   return (
     <div ref={createTripPageRef} className="relative mt-10 text-center overflow-hidden">
-      <AnimatedShapes />
       
       <style jsx>{`
         @keyframes float1 {

@@ -9,26 +9,35 @@ import Hotels from '../Elements/Hotels';
 import { LogInContext } from '@/Context/LogInContext/Login';
 import Places from '../Elements/Places';
 
-function Mytrips() {
-  const { tripId } = useParams();
-  const { setTrip} = useContext(LogInContext);
-  
-  const getTripData = async () => {
+class TripService {
+  static async getTripById(tripId) {
     const docRef = doc(db, 'Trips', tripId);
     const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docSnap.data() : null;
+  }
+}
 
-    if(docSnap.exists()){
-     
-      setTrip(docSnap.data());
-    } else {
-      toast.error('No Such Trip');
+function Mytrips() {
+  const { tripId } = useParams();
+  const { setTrip } = useContext(LogInContext);
+  
+  const getTripData = async () => {
+    try {
+      const tripData = await TripService.getTripById(tripId);
+      if (tripData) {
+        setTrip(tripData);
+      } else {
+        toast.error('No Such Trip');
+      }
+    } catch (error) {
+      toast.error('Error fetching trip data');
+      console.error(error);
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     tripId && getTripData();
   }, [tripId]);
-  
 
   return (
     <div className='py-2'>
@@ -39,4 +48,4 @@ function Mytrips() {
   )
 }
 
-export default Mytrips
+export default Mytrips;

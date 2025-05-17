@@ -5,27 +5,45 @@ import React, { useContext, useEffect, useState } from "react";
 import AlltripsCard from "./AlltripsCard";
 import { useNavigate } from "react-router-dom";
 
+class TripManager {
+  constructor(db, userEmail) {
+    this.db = db;
+    this.userEmail = userEmail;
+  }
+
+  async getAllTrips() {
+    const tripsRef = collection(this.db, "Trips");
+    const q = query(tripsRef, where("userEmail", "==", this.userEmail));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })).reverse();
+  }
+
+  async deleteTrip(id) {
+    await deleteDoc(doc(this.db, "Trips", id));
+    return id;
+  }
+}
+
 function Alltrips() {
   const { user } = useContext(LogInContext);
   const [allTrips, setAllTrips] = useState([]);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  const tripManager = new TripManager(db, user?.email);
+
   const getAllTrips = async () => {
-    const tripsRef = collection(db, "Trips");
-    const q = query(tripsRef, where("userEmail", "==", user?.email));
-    const snapshot = await getDocs(q);
-    const trips = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setAllTrips(trips.reverse());
+    const trips = await tripManager.getAllTrips();
+    setAllTrips(trips);
   };
 
   const handleDeleteTrip = async (id) => {
     try {
-      await deleteDoc(doc(db, "Trips", id));
-      setAllTrips((prev) => prev.filter((trip) => trip.id !== id));
+      await tripManager.deleteTrip(id);
+      setAllTrips(prev => prev.filter(trip => trip.id !== id));
       setMessage("Подорож успішно видалена!");
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {

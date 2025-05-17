@@ -1,75 +1,83 @@
 import { useCache } from "@/Context/Cache/CacheContext";
 import React, { useEffect, useState } from "react";
 import {
-  LoadScript,
   GoogleMap,
   Marker,
   useJsApiLoader,
   Polyline,
 } from "@react-google-maps/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { getRoute } from "@/Service/GlobalApi";
-
 import polyline from "@mapbox/polyline";
-import { distance } from "framer-motion";
-import { Loader, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+class BasePlace {
+  constructor(data) {
+    this.name = data.name;
+    this.address = data.address;
+    this.city = data.city;
+    this.location = data.location;
+  }
+
+  getFullAddress() {
+    return `${this.address}, ${this.city}`;
+  }
+}
+
+class Place extends BasePlace {
+  constructor(data) {
+    super(data);
+    this.rating = data.rating;
+    this.price = data.price;
+    this.photos = data.photos;
+    this.description = data.description;
+    this.id = data.id;
+  }
+
+  getFullAddress() {
+    return `${this.name} — ${super.getFullAddress()}`;
+  }
+}
+
+class Route {
+  constructor(origin, destination) {
+    this.origin = origin;
+    this.destination = destination;
+    this.distance = null;
+    this.time = null;
+    this.decodedPath = [];
+  }
+
+  async fetchRoute() {
+    const routeInfo = await getRoute(this.origin, this.destination);
+    if (routeInfo) {
+      this.distance = routeInfo.distanceMeters;
+      this.time = routeInfo.duration;
+      this.decodedPath = polyline
+        .decode(routeInfo.polyline.encodedPolyline)
+        .map(([lat, lng]) => ({ lat, lng }));
+    }
+  }
+
+  getDistanceKm() {
+    return this.distance ? (this.distance / 1000).toFixed(2) : null;
+  }
+
+  getTimeMinutes() {
+    return this.time ? Math.ceil(this.time / 60) : null;
+  }
+}
 
 const PlacesDetails = ({ PlaceDetailsPageRef }) => {
   const { selectedPlace } = useCache();
-  
-
-  const {
-    name,
-    address,
-    rating,
-    price,
-    city,
-    location,
-    photos,
-    description,
-    id,
-  } = selectedPlace || {};
+  const place = selectedPlace ? new Place(selectedPlace) : null;
 
   const { lat, lng } = useParams();
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lng);
   const navigate = useNavigate();
 
-  const [nearbyLocation, setNearbyLocation] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [decodedPath, setDecodedPath] = useState([]);
-  const [distance, setDistance] = useState(null);
-  const [time, setTime] = useState(null);
-  const [image_url, setImageUrl] = useState(null);
-  const [locationId, setLocationId] = useState(null);
-
-  const [imagesMap, setImagesMap] = useState(new Map());
-
-  useEffect(() => {
-    const fetchNearbyPlaces = async () => {
-      if (!latitude || !longitude) return;
-
-      try {
-        const placesRes = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/api/places?lat=${latitude}&lng=${longitude}&type=hotel`
-        );
-
-        const placesData = await placesRes.json();
-        setNearbyLocation(placesData || []);
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Something went wrong. Check console.");
-      }
-    };
-
-    fetchNearbyPlaces();
-  }, []);
-
-  
+  const [route, setRoute] = useState(null);
 
   const containerStyle = {
     width: "100%",
@@ -86,96 +94,20 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
     libraries: ["places", "marker"],
   });
 
-  const handleSelectLocation = (location) => () => {
-    setSelectedLocation(location);
-  };
-
-  function extractPlaceId(url) {
-    const match = url.match(/place_id:([^&]+)/);
-    return match ? match[1] : null;
-  }
-
-  const fetchGooglePhotoUrl = async (photoReference) => {
-    try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/get-photo-url?photoReference=${photoReference}`
-      );
-      const data = await res.json();
-
-      if (data.imageUrl) {
-        return data.imageUrl;
-      } else {
-        console.error(data.error);
-        return null;
-      }
-    } catch (err) {
-      console.error("Error fetching photo URL:", err);
-      return null;
-    }
-  };
-
   useEffect(() => {
     if (selectedLocation) {
-      const origin = { latitude: latitude, longitude: longitude };
+      const origin = { latitude, longitude };
       const destination = {
-        latitude: selectedLocation?.location.latitude,
-        longitude: selectedLocation?.location.longitude,
+        latitude: selectedLocation.location.latitude,
+        longitude: selectedLocation.location.longitude,
       };
 
-      getRoute(origin, destination).then((routeInfo) => {
-        if (routeInfo) {
-          setDistance(routeInfo.distanceMeters);
-          setTime(routeInfo.duration);
-
-          const decodedPath = polyline
-            .decode(routeInfo.polyline.encodedPolyline)
-            .map(([lat, lng]) => ({
-              lat,
-              lng,
-            }));
-          setDecodedPath(decodedPath);
-          // }
-        }
+      const newRoute = new Route(origin, destination);
+      newRoute.fetchRoute().then(() => {
+        setRoute(newRoute);
       });
-
-      let googleMapsUri = selectedLocation?.googleMapsUri;
-      if (googleMapsUri) {
-        const placeId = extractPlaceId(googleMapsUri);
-        setLocationId(placeId);
-      }
     }
   }, [selectedLocation]);
-
-  useEffect(() => {
-    nearbyLocation.forEach((place) => {
-      if (place.photos) {
-        const photoUrl = imagesMap.get(place.photos);
-        if (!photoUrl) {
-          fetchGooglePhotoUrl(place.photos).then((url) => {
-            setImagesMap((prevMap) => new Map(prevMap).set(place.photos, url));
-          });
-        }
-      }
-    });
-  }, [nearbyLocation]);
-
-  const getImage = (key) => {
-    return imagesMap.get(key);
-  };
-
-  const getTime = (value) => {
-    const seconds = parseInt(value);
-    const minutes = Math.ceil(seconds / 60);
-    return minutes;
-  };
-
-  const getDistance = (value) => {
-    const meters = parseInt(value);
-    const kilometers = (meters / 1000).toFixed(2);
-    return kilometers;
-  };
 
   return (
     <div ref={PlaceDetailsPageRef} className="main">
@@ -183,21 +115,21 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
         <div className="text text-center">
           <h2 className="text-3xl md:text-5xl mt-5 font-bold flex items-center justify-center">
             <span className="bg-gradient-to-b text-7xl from-yellow-400 to-orange-500 bg-clip-text text-center text-transparent">
-              {name}
+              {place?.name}
             </span>
           </h2>
           📍
           <span className="bg-gradient-to-b from-primary/90 to-primary/60 bg-clip-text text-transparent text-xl">
-            {address}
+            {place?.getFullAddress()}
           </span>
         </div>
 
         <div className="flex items-center justify-center py-2 gap-2 mt-2">
           <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-            💵 {price}
+            💵 {place?.price}
           </h3>
           <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-            ⭐ {rating} Зірок
+            ⭐ {place?.rating} Зірок
           </h3>
         </div>
       </div>
@@ -223,20 +155,19 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
               }}
               icon={{
                 path: window.google.maps.SymbolPath.CIRCLE,
-                scale: 12, 
-                fillColor: "#black", 
+                scale: 12,
+                fillColor: "#000000",
                 fillOpacity: 1,
                 strokeWeight: 1,
-                strokeColor: "#ffffff", 
+                strokeColor: "#ffffff",
               }}
               label="🏨"
             />
-            
-            {selectedLocation && (
+
+            {selectedLocation && route && (
               <>
-                
                 <Polyline
-                  path={decodedPath}
+                  path={route.decodedPath}
                   options={{
                     strokeColor: "#1E90FF",
                     strokeOpacity: 0.8,
@@ -250,11 +181,11 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
                   }}
                   icon={{
                     path: window.google.maps.SymbolPath.CIRCLE,
-                    scale: 12, 
-                    fillColor: "black", 
+                    scale: 12,
+                    fillColor: "black",
                     fillOpacity: 1,
                     strokeWeight: 1,
-                    strokeColor: "#ffffff", 
+                    strokeColor: "#ffffff",
                   }}
                   label="📍"
                 />
@@ -264,23 +195,18 @@ const PlacesDetails = ({ PlaceDetailsPageRef }) => {
         )}
       </div>
 
-      {distance && time && (
-        <>
-          <div className="flex items-center justify-center py-2 gap-2 mt-2">
-            <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-              Distance: {distance} meters ( {getDistance(distance)} km )
-            </h3>
-            <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-              Time: {getTime(time)} minutes
-            </h3>
-          </div>
-        </>
+      {route?.distance && route?.time && (
+        <div className="flex items-center justify-center py-2 gap-2 mt-2">
+          <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
+            Distance: {route.distance} meters ( {route.getDistanceKm()} km )
+          </h3>
+          <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
+            Time: {route.getTimeMinutes()} minutes
+          </h3>
+        </div>
       )}
-
-      
     </div>
   );
 };
 
 export default PlacesDetails;
-

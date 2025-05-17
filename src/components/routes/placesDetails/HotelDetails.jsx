@@ -1,20 +1,59 @@
 import { useCache } from "@/Context/Cache/CacheContext";
 import React, { useEffect, useState } from "react";
 import {
-  LoadScript,
   GoogleMap,
   Marker,
   useJsApiLoader,
   Polyline,
 } from "@react-google-maps/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { getRoute } from "@/Service/GlobalApi";
-
 import polyline from "@mapbox/polyline";
-import { distance } from "framer-motion";
-import { Loader, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+class Hotel {
+  constructor(details) {
+    Object.assign(this, details);
+  }
+
+  generateMakeMyTripHotelURL({
+    checkinDate,
+    checkoutDate,
+    poiName,
+    lat,
+    lng,
+    adults = 2,
+    children = 0,
+    rooms = 1,
+  }) {
+    const encodedPOI = encodeURIComponent(poiName);
+    const roomStayQualifier = `${adults}e${children}e`;
+    const rsc = `${rooms}e${adults}e${children}e`;
+
+    return `https://www.makemytrip.com/hotels/hotel-listing/?checkin=${checkinDate}&checkout=${checkoutDate}&searchText=${encodedPOI}&roomStayQualifier=${roomStayQualifier}&reference=hotel&type=poi&rsc=${rsc}`;
+  }
+}
+
+class MapRoute {
+  constructor(origin, destination) {
+    this.origin = origin;
+    this.destination = destination;
+  }
+
+  async fetchRoute() {
+    const routeInfo = await getRoute(this.origin, this.destination);
+    if (!routeInfo) return null;
+
+    const decodedPath = polyline
+      .decode(routeInfo.polyline.encodedPolyline)
+      .map(([lat, lng]) => ({ lat, lng }));
+
+    return {
+      distanceMeters: routeInfo.distanceMeters,
+      duration: routeInfo.duration,
+      decodedPath,
+    };
+  }
+}
 
 const HotelDetails = ({ HotelDetailsPageRef }) => {
   const {
@@ -25,78 +64,26 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     childrenCount,
     rooms,
   } = useCache();
-  const {
-    name,
-    address,
-    rating,
-    price,
-    city,
-    location,
-    photos,
-    description,
-    id,
-  } = selectedHotel || {};
+
+  const { name, address, rating, price, city, location, photos, description, id } =
+    selectedHotel || {};
+
   const { lat, lng } = useParams();
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lng);
   const navigate = useNavigate();
 
-  const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [decodedPath, setDecodedPath] = useState([]);
   const [distance, setDistance] = useState(null);
   const [time, setTime] = useState(null);
-  const [image_url, setImageUrl] = useState(null);
   const [placeId, setPlaceId] = useState(null);
 
-  const [imagesMap, setImagesMap] = useState(new Map());
-
   useEffect(() => {
-    const fetchNearbyPlaces = async () => {
-      if (!latitude || !longitude) return;
+    if (!selectedHotel) return;
+    const hotel = new Hotel(selectedHotel);
 
-      try {
-        const placesRes = await fetch(
-          `${
-            import.meta.env.VITE_BACKEND_URL
-          }/api/places?lat=${latitude}&lng=${longitude}&type=tourist_attraction`
-        );
-
-        const placesData = await placesRes.json();
-        setNearbyPlaces(placesData || []);
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Something went wrong. Check console.");
-      }
-    };
-
-    fetchNearbyPlaces();
-  }, []);
-
-
-  function generateMakeMyTripHotelURL({
-    checkinDate, 
-    checkoutDate, 
-    poiName, 
-    lat, 
-    lng, 
-    adults = 2,
-    children = 0,
-    rooms = 1,
-  }) {
-   
-    const encodedPOI = encodeURIComponent(poiName);
-    console.log("Encoded POI:", encodedPOI);
-
-
-    const roomStayQualifier = `${adults}e${children}e`;
-    const rsc = `${rooms}e${adults}e${children}e`;
-
-    return `https://www.makemytrip.com/hotels/hotel-listing/?checkin=${checkinDate}&checkout=${checkoutDate}&searchText=${encodedPOI}&roomStayQualifier=${roomStayQualifier}&reference=hotel&type=poi&rsc=${rsc}`;
-  }
-
-  useEffect(() => {
-    const url = generateMakeMyTripHotelURL({
+    const url = hotel.generateMakeMyTripHotelURL({
       checkinDate: checkInDate,
       checkoutDate: checkOutDate,
       poiName: name + "," + city,
@@ -108,7 +95,47 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     });
 
     console.log("Generated URL:", url);
-  }, []);
+  }, [selectedHotel]);
+
+  useEffect(() => {
+    if (!selectedPlace) return;
+
+    const origin = { latitude, longitude };
+    const destination = {
+      latitude: selectedPlace.location.latitude,
+      longitude: selectedPlace.location.longitude,
+    };
+
+    const mapRoute = new MapRoute(origin, destination);
+
+    mapRoute.fetchRoute().then((routeInfo) => {
+      if (routeInfo) {
+        setDistance(routeInfo.distanceMeters);
+        setTime(routeInfo.duration);
+        setDecodedPath(routeInfo.decodedPath);
+      }
+    });
+
+    if (selectedPlace.googleMapsUri) {
+      const placeId = extractPlaceId(selectedPlace.googleMapsUri);
+      setPlaceId(placeId);
+    }
+  }, [selectedPlace]);
+
+  function extractPlaceId(url) {
+    const match = url.match(/place_id:([^&]+)/);
+    return match ? match[1] : null;
+  }
+
+  const getTime = (value) => {
+    const seconds = parseInt(value);
+    return Math.ceil(seconds / 60);
+  };
+
+  const getDistance = (value) => {
+    const meters = parseInt(value);
+    return (meters / 1000).toFixed(2);
+  };
 
   const containerStyle = {
     width: "100%",
@@ -124,97 +151,6 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAP_API_KEY,
     libraries: ["places", "marker"],
   });
-
-  const handleSelectPlace = (place) => () => {
-    setSelectedPlace(place);
-  };
-
-  function extractPlaceId(url) {
-    const match = url.match(/place_id:([^&]+)/);
-    return match ? match[1] : null;
-  }
-
-  const fetchGooglePhotoUrl = async (photoReference) => {
-    try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_BACKEND_URL
-        }/get-photo-url?photoReference=${photoReference}`
-      );
-      const data = await res.json();
-
-      if (data.imageUrl) {
-        return data.imageUrl;
-      } else {
-        console.error(data.error);
-        return null;
-      }
-    } catch (err) {
-      console.error("Error fetching photo URL:", err);
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    if (selectedPlace) {
-      const origin = { latitude: latitude, longitude: longitude };
-      const destination = {
-        latitude: selectedPlace?.location.latitude,
-        longitude: selectedPlace?.location.longitude,
-      };
-
-      getRoute(origin, destination).then((routeInfo) => {
-        if (routeInfo) {
-          setDistance(routeInfo.distanceMeters);
-          setTime(routeInfo.duration);
-
-          const decodedPath = polyline
-            .decode(routeInfo.polyline.encodedPolyline)
-            .map(([lat, lng]) => ({
-              lat,
-              lng,
-            }));
-          setDecodedPath(decodedPath);
-          // }
-        }
-      });
-
-      let googleMapsUri = selectedPlace?.googleMapsUri;
-      if (googleMapsUri) {
-        const placeId = extractPlaceId(googleMapsUri);
-        setPlaceId(placeId);
-      }
-    }
-  }, [selectedPlace]);
-
-  useEffect(() => {
-    nearbyPlaces.forEach((place) => {
-      if (place.photos) {
-        const photoUrl = imagesMap.get(place.photos);
-        if (!photoUrl) {
-          fetchGooglePhotoUrl(place.photos).then((url) => {
-            setImagesMap((prevMap) => new Map(prevMap).set(place.photos, url));
-          });
-        }
-      }
-    });
-  }, [nearbyPlaces]);
-
-  const getImage = (key) => {
-    return imagesMap.get(key);
-  };
-
-  const getTime = (value) => {
-    const seconds = parseInt(value);
-    const minutes = Math.ceil(seconds / 60);
-    return minutes;
-  };
-
-  const getDistance = (value) => {
-    const meters = parseInt(value);
-    const kilometers = (meters / 1000).toFixed(2);
-    return kilometers;
-  };
 
   return (
     <div ref={HotelDetailsPageRef} className="main">
@@ -250,11 +186,7 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
             <span className="text-gray-500 animate-pulse">Loading Map...</span>
           </div>
         ) : (
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={mapCenter}
-            zoom={15}
-          >
+          <GoogleMap mapContainerStyle={containerStyle} center={mapCenter} zoom={15}>
             <Marker
               position={{
                 lat: latitude,
@@ -262,18 +194,16 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
               }}
               icon={{
                 path: window.google.maps.SymbolPath.CIRCLE,
-                scale: 12, 
-                fillColor: "#black", 
+                scale: 12,
+                fillColor: "black",
                 fillOpacity: 1,
                 strokeWeight: 1,
-                strokeColor: "#ffffff", 
+                strokeColor: "#ffffff",
               }}
               label="🏨"
             />
-            {/* <Marker position={mapCenter} /> */}
             {selectedPlace && (
               <>
-                {/* Draw a line between hotel and place */}
                 <Polyline
                   path={decodedPath}
                   options={{
@@ -289,11 +219,11 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
                   }}
                   icon={{
                     path: window.google.maps.SymbolPath.CIRCLE,
-                    scale: 12, 
-                    fillColor: "black", 
+                    scale: 12,
+                    fillColor: "black",
                     fillOpacity: 1,
                     strokeWeight: 1,
-                    strokeColor: "#ffffff", 
+                    strokeColor: "#ffffff",
                   }}
                   label="📍"
                 />
@@ -304,22 +234,17 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
       </div>
 
       {distance && time && (
-        <>
-          <div className="flex items-center justify-center py-2 gap-2 mt-2">
-            <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-              Distance: {distance} meters ( {getDistance(distance)} km )
-            </h3>
-            <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
-              Time: {getTime(time)} minutes
-            </h3>
-          </div>
-        </>
+        <div className="flex items-center justify-center py-2 gap-2 mt-2">
+          <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
+            Distance: {distance} meters ( {getDistance(distance)} km )
+          </h3>
+          <h3 className="location-info opacity-90 bg-foreground/20 px-2 md:px-4 flex items-center justify-center rounded-md text-center text-md font-medium tracking-tight text-primary/80 md:text-lg">
+            Time: {getTime(time)} minutes
+          </h3>
+        </div>
       )}
-
-     
     </div>
   );
 };
 
 export default HotelDetails;
-
