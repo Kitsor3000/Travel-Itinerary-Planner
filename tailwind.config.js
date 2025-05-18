@@ -107,9 +107,6 @@ module.exports = {
   			marquee: 'marquee var(--duration) infinite linear',
 			move: "move 5s linear infinite",
   			'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
-				'pulse-slow': 'pulseSlow 8s ease-in-out infinite',
-				 move: 'move 5s linear infinite',
-
   		},
   		fontFamily: {
   			SatoshiLight: [
@@ -164,7 +161,4 @@ module.exports = {
   	}
   },
   plugins: [require("tailwindcss-animate")],
-
-
-
 }

@@ -1,24 +1,22 @@
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
   useLocation,
 } from "react-router-dom";
 import Header from "./components/custom/Header.jsx";
 import Hero from "./components/custom/Hero.jsx";
 import CreateTrip from "./components/routes/plan-a-trip/CreateTrip.jsx";
-import Mytrips from "./components/routes/my-trips/[tripId]/Mytrips.jsx";
+import MyTrips from "./components/routes/my-trips/[tripId]/MyTrips.jsx";
 import { useContext, useEffect, useRef, useState } from "react";
 import { LogInContext } from "./Context/LogInContext/Login.jsx";
 import Footer from "./components/custom/Footer.jsx";
-import Alltrips from "./components/routes/all-trips/Alltrips.jsx";
+import AllTrips from "./components/routes/all-trips/AllTrips.jsx";
 import toast from "react-hot-toast";
 import gsap from "gsap";
 import ProgressBar from "./components/constants/ProgressBar.jsx";
 import { useRefContext } from "./Context/RefContext/RefContext.jsx";
 import HotelDetails from "./components/routes/placesDetails/HotelDetails.jsx";
-import PlacesDetails from "./components/routes/placesDetails/PlacesDetails.jsx";
+import PlaceDetails from "./components/routes/placesDetails/PlaceDetails.jsx";
 
 function App() {
   const { user, isAuthenticated } = useContext(LogInContext);
@@ -157,11 +155,11 @@ function App() {
             />
             <Route
               path="/my-trips/:tripId"
-              element={isAuthenticated ? <Mytrips /> : <Hero />}
+              element={isAuthenticated ? <MyTrips /> : <Hero />}
             />
             <Route
               path="/all-trips"
-              element={isAuthenticated ? <Alltrips /> : <Hero />}
+              element={isAuthenticated ? <AllTrips /> : <Hero />}
             />
             <Route
               path="/details-for-hotel/:lat/:lng"
@@ -177,7 +175,7 @@ function App() {
               path="/details-for-place/:lat/:lng"
               element={
                 isAuthenticated ? (
-                  <PlacesDetails PlaceDetailsPageRef={PlaceDetailsPageRef} />
+                  <PlaceDetails PlaceDetailsPageRef={PlaceDetailsPageRef} />
                 ) : (
                   <Hero />
                 )

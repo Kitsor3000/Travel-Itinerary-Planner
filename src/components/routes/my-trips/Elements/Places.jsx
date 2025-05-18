@@ -1,5 +1,4 @@
-import React from "react";
-import Placescard from "./Placescard";
+import PlaceCards from "./PlaceCards.jsx";
 
 function Places() {
   return (
@@ -8,7 +7,7 @@ function Places() {
         Місця
       </h2>
       <div className="main-info mt-2 md:mt-4">
-        <Placescard />
+        <PlaceCards />
       </div>
     </div>
   );

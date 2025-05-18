@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Button } from "../ui/button.jsx";
 import { LogInContext } from "@/Context/LogInContext/Login.jsx";
 import {
@@ -15,13 +15,13 @@ import { Link } from "react-router-dom";
 import ThemeToggle from "../constants/ThemeToggle.jsx";
 
 function Header({headerRef}) {
-  const { user, isAuthenticated, logout, loginWithPopup, loginWithRedirect } =
+  const { user, isAuthenticated, logout, loginWithPopup } =
     useContext(LogInContext);
   const LogOut = () => {
     logout();
   };
   const LogIn = () => {
-    // loginWithRedirect();
+    
     loginWithPopup();
   };
 
