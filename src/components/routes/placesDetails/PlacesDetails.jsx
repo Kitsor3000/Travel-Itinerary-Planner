@@ -38,32 +38,78 @@ class Place extends BasePlace {
   }
 }
 
-class Route {
-  constructor(origin, destination) {
-    this.origin = origin;
-    this.destination = destination;
-    this.distance = null;
-    this.time = null;
-    this.decodedPath = [];
+class AbstractRoute {
+  constructor() {
+    if (new.target === AbstractRoute) {
+      throw new Error("Cannot instantiate abstract class");
+    }
   }
 
   async fetchRoute() {
-    const routeInfo = await getRoute(this.origin, this.destination);
+    throw new Error("Method 'fetchRoute()' must be implemented");
+  }
+
+  getDistance() {
+    throw new Error("Method 'getDistance()' must be implemented");
+  }
+
+  getDuration() {
+    throw new Error("Method 'getDuration()' must be implemented");
+  }
+}
+
+class BaseRoute extends AbstractRoute {
+  #origin;
+  #destination;
+  #distance = null;
+  #time = null;
+  #decodedPath = [];
+
+  constructor(origin, destination) {
+    super();
+    this.#origin = origin;
+    this.#destination = destination;
+  }
+
+  async #fetchRouteData() {
+    return await getRoute(this.#origin, this.#destination);
+  }
+
+  async fetchRoute() {
+    const routeInfo = await this.#fetchRouteData();
     if (routeInfo) {
-      this.distance = routeInfo.distanceMeters;
-      this.time = routeInfo.duration;
-      this.decodedPath = polyline
+      this.#distance = routeInfo.distanceMeters;
+      this.#time = routeInfo.duration;
+      this.#decodedPath = polyline
         .decode(routeInfo.polyline.encodedPolyline)
         .map(([lat, lng]) => ({ lat, lng }));
     }
   }
 
+  getDistance() {
+    return this.#distance;
+  }
+
+  getDuration() {
+    return this.#time;
+  }
+
+  get origin() { return this.#origin; }
+  get destination() { return this.#destination; }
+  get decodedPath() { return this.#decodedPath; }
+}
+
+class Route extends BaseRoute {
+  constructor(origin, destination) {
+    super(origin, destination);
+  }
+
   getDistanceKm() {
-    return this.distance ? (this.distance / 1000).toFixed(2) : null;
+    return this.getDistance() ? (this.getDistance() / 1000).toFixed(2) : null;
   }
 
   getTimeMinutes() {
-    return this.time ? Math.ceil(this.time / 60) : null;
+    return this.getDuration() ? Math.ceil(this.getDuration() / 60) : null;
   }
 }
 

@@ -5,15 +5,26 @@ import React, { useContext, useEffect, useState } from "react";
 import AlltripsCard from "./AlltripsCard";
 import { useNavigate } from "react-router-dom";
 
-class TripManager {
+class BaseTripManager {
   constructor(db, userEmail) {
     this.db = db;
     this.userEmail = userEmail;
   }
+  async getAllTrips() {
+    throw new Error("Method 'getAllTrips()' must be implemented");
+  }
+}
+
+class TripManager extends BaseTripManager {
+  constructor(db, userEmail) {
+    super(db, userEmail);
+    this._db = db;
+    this._userEmail = userEmail;
+  }
 
   async getAllTrips() {
-    const tripsRef = collection(this.db, "Trips");
-    const q = query(tripsRef, where("userEmail", "==", this.userEmail));
+    const tripsRef = collection(this._db, "Trips");
+    const q = query(tripsRef, where("userEmail", "==", this._userEmail));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({
       id: doc.id,
@@ -22,7 +33,7 @@ class TripManager {
   }
 
   async deleteTrip(id) {
-    await deleteDoc(doc(this.db, "Trips", id));
+    await deleteDoc(doc(this._db, "Trips", id));
     return id;
   }
 }

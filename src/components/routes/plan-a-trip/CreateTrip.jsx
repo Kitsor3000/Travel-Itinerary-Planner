@@ -13,32 +13,31 @@ import { db } from "@/Service/Firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
-class TripCreator {
+class Trip {
   constructor(db, user) {
     this.db = db;
     this.user = user;
   }
 
-  async saveTrip(formData, tripData) {
-    const id = Date.now().toString();
-    await setDoc(doc(this.db, "Trips", id), {
-      tripId: id,
-      userSelection: formData,
-      tripData: tripData,
-      userName: this.user?.name,
-      userEmail: this.user?.email,
-    });
-    return id;
+  async _saveToDatabase(collection, id, data) {
+    await setDoc(doc(this.db, collection, id), data);
   }
 
-  static generatePrompt(formData) {
-    return PROMPT.replace(/{location}/g, formData?.location)
-      .replace(/{noOfDays}/g, formData?.noOfDays)
-      .replace(/{People}/g, formData?.People)
-      .replace(/{Budget}/g, formData?.Budget);
+  validateForm(formData) {
+    throw new Error("Method 'validateForm()' must be implemented");
   }
 
-  static validateForm(formData) {
+  generatePrompt(formData) {
+    throw new Error("Method 'generatePrompt()' must be implemented");
+  }
+}
+
+class StandardTrip extends Trip {
+  constructor(db, user) {
+    super(db, user);
+  }
+
+  validateForm(formData) {
     if (!formData?.noOfDays || !formData?.location || !formData?.People || !formData?.Budget) {
       throw new Error("Будь ласка, заповніть всі поля.");
     }
@@ -49,9 +48,29 @@ class TripCreator {
       throw new Error("Некоректна кількість днів");
     }
   }
+
+  generatePrompt(formData) {
+    return PROMPT.replace(/{location}/g, formData?.location)
+      .replace(/{noOfDays}/g, formData?.noOfDays)
+      .replace(/{People}/g, formData?.People)
+      .replace(/{Budget}/g, formData?.Budget);
+  }
+
+  async saveTrip(formData, tripData) {
+    const id = Date.now().toString();
+    const tripDocument = {
+      tripId: id,
+      userSelection: formData,
+      tripData: tripData,
+      userName: this.user?.name,
+      userEmail: this.user?.email,
+    };
+    await this._saveToDatabase("Trips", id, tripDocument);
+    return id;
+  }
 }
 
-function CreateTrip({createTripPageRef}) {
+function CreateTrip({ createTripPageRef }) {
   const [place, setPlace] = useState("");
   const [formData, setFormData] = useState({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -59,7 +78,7 @@ function CreateTrip({createTripPageRef}) {
   const navigate = useNavigate();
 
   const { user, loginWithPopup, isAuthenticated } = useContext(LogInContext);
-  const tripCreator = new TripCreator(db, user);
+  const trip = new StandardTrip(db, user);
 
   const handleInputChange = (name, value) => {
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -72,27 +91,37 @@ function CreateTrip({createTripPageRef}) {
     }
 
     try {
-      TripCreator.validateForm(formData);
+      trip.validateForm(formData);
       
       const toastId = toast.loading("Створюємо подорож...", { icon: "✈️" });
       setIsLoading(true);
       
-      const result = await chatSession.sendMessage(TripCreator.generatePrompt(formData));
-      const trip = JSON.parse(result.response.text());
+      const result = await chatSession.sendMessage(trip.generatePrompt(formData));
+      const tripData = JSON.parse(result.response.text());
       
-      const tripId = await tripCreator.saveTrip(formData, trip);
+      const tripId = await trip.saveTrip(formData, tripData);
       
       setIsLoading(false);
       toast.dismiss(toastId);
       toast.success("Подорож успішно створена!");
       
-      localStorage.setItem("Trip", JSON.stringify(trip));
+      localStorage.setItem("Trip", JSON.stringify(tripData));
       localStorage.setItem("UserSelection", JSON.stringify(formData));
       navigate("/my-trips/" + tripId);
     } catch (error) {
       setIsLoading(false);
       toast.dismiss();
       toast.error(error.message);
+      console.error(error);
+    }
+  };
+
+  const SignIn = async () => {
+    try {
+      await loginWithPopup();
+      setIsDialogOpen(false);
+    } catch (error) {
+      toast.error("Помилка при вході");
       console.error(error);
     }
   };
