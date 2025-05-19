@@ -14,6 +14,7 @@ const generationConfig = {
 };
 
 
+
 class AbstractService {
   async execute() {
     throw new Error("Method 'execute()' must be implemented");
