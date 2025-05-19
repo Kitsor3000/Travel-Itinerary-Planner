@@ -10,26 +10,49 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getRoute } from "@/Service/GlobalApi";
 import polyline from "@mapbox/polyline";
 
-class Hotel {
+class Place {
   constructor(details) {
+    if (new.target === Place) {
+      throw new Error("Cannot instantiate abstract class Place directly");
+    }
     Object.assign(this, details);
   }
 
-  generateMakeMyTripHotelURL({
-    checkinDate,
-    checkoutDate,
-    poiName,
-    lat,
-    lng,
-    adults = 2,
-    children = 0,
-    rooms = 1,
-  }) {
-    const encodedPOI = encodeURIComponent(poiName);
-    const roomStayQualifier = `${adults}e${children}e`;
-    const rsc = `${rooms}e${adults}e${children}e`;
+  getUrl() {
+    throw new Error("Method 'getUrl()' must be implemented in subclass");
+  }
+}
 
-    return `https://www.makemytrip.com/hotels/hotel-listing/?checkin=${checkinDate}&checkout=${checkoutDate}&searchText=${encodedPOI}&roomStayQualifier=${roomStayQualifier}&reference=hotel&type=poi&rsc=${rsc}`;
+class Hotel extends Place {
+  constructor(details) {
+    super(details);
+  }
+
+  getUrl() {
+    const { checkInDate, checkOutDate, name, city, location, adults = 2, childrenCount = 0, rooms = 1 } = this;
+    const encodedPOI = encodeURIComponent(`${name}, ${city}`);
+    const roomStayQualifier = `${adults}e${childrenCount}e`;
+    const rsc = `${rooms}e${adults}e${childrenCount}e`;
+
+    return `https://www.makemytrip.com/hotels/hotel-listing/?checkin=${checkInDate}&checkout=${checkOutDate}&searchText=${encodedPOI}&roomStayQualifier=${roomStayQualifier}&reference=hotel&type=poi&rsc=${rsc}`;
+  }
+
+  getBookingUrl() {
+    const { checkInDate, checkOutDate, name, location } = this;
+    const { latitude: lat, longitude: lng } = location;
+    return `https://www.booking.com/searchresults.html?checkin=${checkInDate}&checkout=${checkOutDate}&latitude=${lat}&longitude=${lng}&ss=${encodeURIComponent(name)}`;
+  }
+}
+
+class Restaurant extends Place {
+  constructor(details) {
+    super(details);
+  }
+
+  getUrl() {
+    const { name, location, cuisine = "" } = this;
+    const { latitude: lat, longitude: lng } = location;
+    return `https://www.google.com/maps/search/${encodeURIComponent(cuisine)}+restaurant+near+${encodeURIComponent(name)}/@${lat},${lng},15z`;
   }
 }
 
@@ -81,20 +104,25 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
 
   useEffect(() => {
     if (!selectedHotel) return;
-    const hotel = new Hotel(selectedHotel);
-
-    const url = hotel.generateMakeMyTripHotelURL({
-      checkinDate: checkInDate,
-      checkoutDate: checkOutDate,
-      poiName: name + "," + city,
-      lat: latitude,
-      lng: longitude,
-      adults: adults,
-      children: childrenCount,
-      rooms: rooms,
+    
+    const hotel = new Hotel({
+      ...selectedHotel,
+      checkInDate,
+      checkOutDate,
+      adults,
+      childrenCount,
+      rooms
     });
 
-    console.log("Generated URL:", url);
+    const url = hotel.getUrl();
+    console.log("Generated Hotel URL:", url);
+
+    const restaurant = new Restaurant({
+      name: "Local Restaurant",
+      location: { latitude: 50.4501, longitude: 30.5234 },
+      cuisine: "Ukrainian"
+    });
+    console.log("Restaurant URL:", restaurant.getUrl());
   }, [selectedHotel]);
 
   useEffect(() => {
