@@ -1,5 +1,5 @@
 import { useCache } from "@/Context/Cache/CacheContext";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   GoogleMap,
   Marker,
@@ -65,8 +65,10 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     rooms,
   } = useCache();
 
+
   const { name, address, rating, price, city, location, photos, description, id } =
     selectedHotel || {};
+
 
   const { lat, lng } = useParams();
   const latitude = parseFloat(lat);
@@ -79,9 +81,11 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
   const [time, setTime] = useState(null);
   const [placeId, setPlaceId] = useState(null);
 
+
   useEffect(() => {
     if (!selectedHotel) return;
     const hotel = new Hotel(selectedHotel);
+
 
     const url = hotel.generateMakeMyTripHotelURL({
       checkinDate: checkInDate,
@@ -127,6 +131,7 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     return match ? match[1] : null;
   }
 
+
   const getTime = (value) => {
     const seconds = parseInt(value);
     return Math.ceil(seconds / 60);
@@ -152,7 +157,8 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     libraries: ["places", "marker"],
   });
 
-  return (
+
+ return (
     <div ref={HotelDetailsPageRef} className="main">
       <div className="hotel-details mt-5">
         <div className="text text-center">
@@ -246,5 +252,4 @@ const HotelDetails = ({ HotelDetailsPageRef }) => {
     </div>
   );
 };
-
 export default HotelDetails;

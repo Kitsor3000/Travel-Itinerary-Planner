@@ -3,12 +3,12 @@ const RefContext = createContext(null);
 
 export const RefProvider = (props) => {
   const locationInfoRef = useRef(null);
-  const holetsRef = useRef(null);
+  const hotelsRef = useRef(null);
   const placesRef = useRef(null);
 
 
   return (
-    <RefContext.Provider value={{ locationInfoRef, holetsRef, placesRef }}>
+    <RefContext.Provider value={{ locationInfoRef, hotelsRef, placesRef }}>
       {props.children}
     </RefContext.Provider>
   );

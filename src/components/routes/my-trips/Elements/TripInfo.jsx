@@ -1,7 +1,6 @@
 import { LogInContext } from "@/Context/LogInContext/Login";
 import { getCityDetails, PHOTO_URL } from "@/Service/GlobalApi";
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,7 +13,7 @@ import {
 import { useRefContext } from "@/Context/RefContext/RefContext";
 import { useCache } from "@/Context/Cache/CacheContext";
 
-function Locationinfo() {
+function TripInfo() {
   const { trip } = useContext(LogInContext);
   const [cityDets, setCityDets] = useState([]);
   const [photos, setPhotos] = useState("");
@@ -62,10 +61,10 @@ function Locationinfo() {
     const data = {
       textQuery: city,
     };
-    const result = await getCityDetails(data)
+    const _ = await getCityDetails(data)
       .then((res) => {
         setCityDets(res.data.places[0]);
-        // console.log("Res Data", res.data.places[0]);
+        
         setAllImages(res.data.places[0].photos);
         setPhotos(res.data.places[0].photos[0].name);
       })
@@ -86,7 +85,7 @@ function Locationinfo() {
   }, [photos]);
 
   function getCheckinAndCheckout_MMDDYYYY(daysToStay) {
-    daysToStay = parseInt(daysToStay, 10); // 👈 fix here
+    daysToStay = parseInt(daysToStay, 10); 
 
     const today = new Date();
     const checkoutDate = new Date(today.getTime());
@@ -125,16 +124,14 @@ function Locationinfo() {
   }
 
   const {
-    // checkInDate,
+    
     setCheckInDate,
-    // checkOutDate,
+    
     setCheckOutDate,
     setAdults,
     setChildrenCount,
     setRooms,
-    // adults,
-    // childrenCount,
-    // rooms,
+   
   } = useCache();
 
   useEffect(() => {
@@ -207,4 +204,4 @@ function Locationinfo() {
   );
 }
 
-export default Locationinfo;
+export default TripInfo;

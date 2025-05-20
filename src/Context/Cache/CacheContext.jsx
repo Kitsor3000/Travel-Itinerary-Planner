@@ -1,44 +1,45 @@
-import { createContext, useContext, useState } from "react";
+import React, { createContext } from "react";
 
 const CacheContext = createContext();
 
-export const CacheProvider = ({ children }) => {
-  const [placeCache, setPlaceCache] = useState(new Map());
-  const [selectedHotel, setSelectedHotel] = useState(null);
-  const [selectedPlace, setSelectedPlace] = useState(null);
+export class CacheProvider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            placeCache: new Map(),
+            selectedHotel: null,
+            selectedPlace: null,
+            checkInDate: null,
+            checkOutDate: null,
+            adults: 1,
+            childrenCount: 0,
+            rooms: 1,
+        };
+    }
 
-  const [checkInDate, setCheckInDate] = useState(null);
-  const [checkOutDate, setCheckOutDate] = useState(null);
-  const [adults, setAdults] = useState(1);
-  const [childrenCount, setChildrenCount] = useState(0);
-  const [rooms, setRooms] = useState(1);
+    setValue = (key, value) => {
+        this.setState({ [key]: value });
+    };
 
+    render() {
+        const contextValue = {
+            ...this.state,
+            setPlaceCache: (placeCache) => this.setValue("placeCache", placeCache),
+            setSelectedHotel: (selectedHotel) => this.setValue("selectedHotel", selectedHotel),
+            setSelectedPlace: (selectedPlace) => this.setValue("selectedPlace", selectedPlace),
+            setCheckInDate: (checkInDate) => this.setValue("checkInDate", checkInDate),
+            setCheckOutDate: (checkOutDate) => this.setValue("checkOutDate", checkOutDate),
+            setAdults: (adults) => this.setValue("adults", adults),
+            setChildrenCount: (childrenCount) => this.setValue("childrenCount", childrenCount),
+            setRooms: (rooms) => this.setValue("rooms", rooms),
+        };
 
-  return (
-    <CacheContext.Provider
-      value={{
-        placeCache,
-        setPlaceCache,
-        selectedHotel,
-        setSelectedHotel,
-        selectedPlace,
-        setSelectedPlace,
-        setCheckInDate,
-        setCheckOutDate,
-        checkInDate,
-        checkOutDate,
-        setAdults,
-        setChildrenCount,
-        setRooms,
-        adults,
-        childrenCount,
-        rooms,
+        return (
+            <CacheContext.Provider value={contextValue}>
+                {this.props.children}
+            </CacheContext.Provider>
+        );
+    }
+}
 
-      }}
-    >
-      {children}
-    </CacheContext.Provider>
-  );
-};
-
-export const useCache = () => useContext(CacheContext);
+export const useCache = () => React.useContext(CacheContext);
