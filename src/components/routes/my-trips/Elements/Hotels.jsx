@@ -1,5 +1,5 @@
 import React from "react";
-import Hotelcard from "./Hotelcard";
+import HotelCards from "./HotelCards.jsx";
 
 function Hotels() {
   return (
@@ -8,7 +8,7 @@ function Hotels() {
         Готелі
       </h2>
       <div className="main-info mt-2 md:mt-4">
-        <Hotelcard  />
+        <HotelCards  />
       </div>
     </div>
   );

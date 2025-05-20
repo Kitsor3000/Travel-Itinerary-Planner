@@ -1,14 +1,12 @@
-import React, { useContext } from "react";
-import { useMediaQuery } from "react-responsive";
+import { useContext } from "react";
 import { LogInContext } from "@/Context/LogInContext/Login";
-import PlaceCards from "../Cards/PlaceCards";
+import PlaceCard from "../Cards/PlaceCard.jsx";
 import { useRefContext } from "@/Context/RefContext/RefContext";
 
-function Placescard() {
+function PlaceCards() {
 
   const { trip } = useContext(LogInContext);
   const itinerary = trip?.tripData?.itinerary;
-  const city = trip?.tripData?.location;
 
   const { placesRef } = useRefContext();
 
@@ -29,7 +27,7 @@ function Placescard() {
               {day.places.map((place, idx) => {
                 return (
                   <div key={idx} className="md:w-[48%]">
-                    <PlaceCards className="place-card" place={place} />
+                    <PlaceCard className="place-card" place={place} />
                   </div>
                 );
               })}
@@ -41,4 +39,4 @@ function Placescard() {
   );
 }
 
-export default Placescard;
+export default PlaceCards;

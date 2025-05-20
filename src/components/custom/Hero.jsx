@@ -1,10 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import { LogInContext } from "@/Context/LogInContext/Login";
 import Marquee from "../ui/marquee";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
+const AnimatedShapes = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-orange-400/10 blur-md animate-float1"></div>
+      <div className="absolute top-1/4 right-20 w-60 h-60 rounded-full bg-orange-400/10 blur-md animate-float2"></div>
+      <div className="absolute bottom-20 left-1/4 w-80 h-80 rounded-full bg-orange-400/10 blur-md animate-float3"></div>
+    </div>
+  );
+};
 
 const AnimatedShapes = () => {
   return (

@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
@@ -22,15 +21,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         }}
       >
         <CacheProvider>
-        <RefProvider>
-          <LogInContextProvider>
-            <ErrorBoundary>
-              <Toaster />
-              <App />
-            </ErrorBoundary>
-          </LogInContextProvider>
-        </RefProvider>
-        </CacheProvider>
+          <RefProvider>
+            <LogInContextProvider>
+              <ErrorBoundary>
+                <Toaster />
+                <App />
+              </ErrorBoundary>
+            </LogInContextProvider>
+          </RefProvider>
+          </CacheProvider>
       </Auth0Provider>
     </ThemeProvider>
   </BrowserRouter>

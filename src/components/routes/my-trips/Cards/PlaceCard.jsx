@@ -1,6 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useMediaQuery } from "react-responsive";
+import { useContext, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,33 +7,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { Link } from "react-router-dom";
 import { LogInContext } from "@/Context/LogInContext/Login";
 import { getPlaceDetails, PHOTO_URL } from "@/Service/GlobalApi";
-
 import { useCache } from "@/Context/Cache/CacheContext";
 
-function HotelCards({ hotel }) {
-  const { setSelectedHotel } = useCache();
+function PlaceCard({ place }) {
+  const { trip } = useContext(LogInContext);
+  const city = trip?.tripData?.location;
 
   const [placeDets, setPlaceDets] = useState([]);
   const [photos, setPhotos] = useState("");
   const [Url, setUrl] = useState("");
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState("");
+
   const [rating, setRating] = useState(0);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const [hotelId, setHotelId] = useState("");
+  const [placeId, setPlaceId] = useState("");
 
-  const [currentHotel, setCurrentHotel] = useState(null);
+  const [currentPlace, setCurrentPlace] = useState(null);
 
-  const { trip } = useContext(LogInContext);
-  const city = trip?.tripData?.location;
-  const hotels = trip?.tripData?.hotels;
+  const { setSelectedPlace } = useCache();
 
   const getPlaceInfo = async () => {
     const data = {
-      textQuery: hotel.name + city,
+      textQuery: place.name + city,
     };
 
     try {
@@ -45,7 +43,7 @@ function HotelCards({ hotel }) {
         id: place.id,
         lat: place.location.latitude,
         lng: place.location.longitude,
-        name: hotel.name,
+        name: place.displayName.text,
         city: city,
         address: place.formattedAddress,
         rating: place.rating,
@@ -60,51 +58,39 @@ function HotelCards({ hotel }) {
       setRating(info.rating);
       setLatitude(info.lat);
       setLongitude(info.lng);
-      setHotelId(info.id);
+      setPlaceId(info.id);
 
-      setCurrentHotel(info);
+      setCurrentPlace(info);
+    
     } catch (err) {
       console.log("Error fetching place details:", err);
     }
   };
 
   useEffect(() => {
-    if (trip && hotel) getPlaceInfo();
-  }, [trip, hotel]);
-
-  const getUrl = (name) => {
-    return PHOTO_URL.replace("{replace}", name);
-  };
+    if (trip && place) getPlaceInfo();
+  }, [trip, place]);
 
   useEffect(() => {
     const url = PHOTO_URL.replace("{replace}", photos);
     setUrl(url);
   }, [photos]);
 
-  const containerStyle = {
-    width: "100%",
-    height: "400px",
-  };
-
-  const mapCenter = {
-    lat: latitude || 0,
-    lng: longitude || 0,
-  };
-
-  const handleSelectHotel = () => {
-    let combinedHotel = { ...hotel, ...currentHotel };
-    setSelectedHotel(combinedHotel);
+  const handleSelectPlace = () => {
+    let combinedHotel = { ...place, ...currentPlace };
+    setSelectedPlace(combinedHotel);
   };
 
   return (
     <Link
-      to={`/details-for-hotel/${latitude}/${longitude}`}
-      onClick={handleSelectHotel}
+      to={`/details-for-place/${latitude}/${longitude}`}
+      onClick={handleSelectPlace}
     >
       <Card className="border-foreground/20 p-1 h-full flex flex-col gap-3 hover:scale-105 duration-300">
         <div className="img h-full rounded-lg">
           <img
             src={Url || "/logo.png"}
+            
             className="h-80 w-full object-cover"
             alt=""
           />
@@ -112,24 +98,25 @@ function HotelCards({ hotel }) {
         <div className="text-content w-full flex items-center gap-3 justify-between flex-col h-full">
           <CardHeader className="w-full">
             <CardTitle className="opacity-90 w-full text-center text-xl font-black text-primary/80 md:text-3xl">
-              {hotel.name}
+              {place.name}
             </CardTitle>
             <CardDescription className="line-clamp-2 tracking-wide opacity-90 w-full text-center text-sm text-primary/80 md:text-md">
-              {hotel.description}
+              {place.details}
             </CardDescription>
           </CardHeader>
           <CardContent className="w-full">
-            <div className="hotel-details">
+            <div className="places-details">
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide">
-                ⭐ Рейтинг: {rating}
-              </span>{" "}
+                🕒 Час роботи: {place.timings}{" "}
+              </span>
               <br />
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide">
-                💵 Ціна: {hotel.price}
+                💵 Ціна:
+                {place.pricing}{" "}
               </span>{" "}
               <br />
               <span className="font-medium text-primary/80 opacity-90 text-sm md:text-base tracking-wide line-clamp-1">
-                📍 Місце: {address ? address : hotel.address}
+                📍 Місце: {address ? address : place.address}
               </span>
             </div>
           </CardContent>
@@ -139,4 +126,4 @@ function HotelCards({ hotel }) {
   );
 }
 
-export default HotelCards;
+export default PlaceCard;
