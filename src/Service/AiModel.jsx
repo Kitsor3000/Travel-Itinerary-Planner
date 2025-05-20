@@ -83,3 +83,5 @@ export class AIService  extends AbstractService {
     }
   }
 }
+
+export const chatSession = new AIService();

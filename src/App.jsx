@@ -16,7 +16,7 @@ import gsap from "gsap";
 import ProgressBar from "./components/constants/ProgressBar.jsx";
 import { useRefContext } from "./Context/RefContext/RefContext.jsx";
 import HotelDetails from "./components/routes/placesDetails/HotelDetails.jsx";
-import PlaceDetails from "./components/routes/placesDetails/PlaceDetails.jsx";
+import PlaceDetails from "./components/routes/placesDetails/PlacesDetails.jsx";
 
 function App() {
   const { user, isAuthenticated } = useContext(LogInContext);
