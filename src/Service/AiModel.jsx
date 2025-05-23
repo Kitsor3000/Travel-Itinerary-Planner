@@ -14,6 +14,7 @@ const generationConfig = {
 };
 
 
+// command
 
 class AbstractService {
   async execute() {

@@ -10,10 +10,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getRoute } from "@/Service/GlobalApi";
 import polyline from "@mapbox/polyline";
 
-class Place {
-  constructor(details) {
-    if (new.target === Place) {
-      throw new Error("Cannot instantiate abstract class Place directly");
+class TravelPoint{
+constructor(details) {
+    if (new.target === TravelPoint) {
+      throw new Error("Cannot instantiate abstract class TravelPoint directly");
     }
     Object.assign(this, details);
   }
@@ -23,13 +23,23 @@ class Place {
   }
 }
 
-class Hotel extends Place {
+class Hotel extends TravelPoint {
   constructor(details) {
     super(details);
   }
 
   getUrl() {
-    const { checkInDate, checkOutDate, name, city, location, adults = 2, childrenCount = 0, rooms = 1 } = this;
+    const {
+      checkInDate,
+      checkOutDate,
+      name,
+      city,
+      location,
+      adults = 2,
+      childrenCount = 0,
+      rooms = 1,
+    } = this;
+
     const encodedPOI = encodeURIComponent(`${name}, ${city}`);
     const roomStayQualifier = `${adults}e${childrenCount}e`;
     const rsc = `${rooms}e${adults}e${childrenCount}e`;
@@ -40,11 +50,12 @@ class Hotel extends Place {
   getBookingUrl() {
     const { checkInDate, checkOutDate, name, location } = this;
     const { latitude: lat, longitude: lng } = location;
+
     return `https://www.booking.com/searchresults.html?checkin=${checkInDate}&checkout=${checkOutDate}&latitude=${lat}&longitude=${lng}&ss=${encodeURIComponent(name)}`;
   }
 }
 
-class Restaurant extends Place {
+class Restaurant extends TravelPoint {
   constructor(details) {
     super(details);
   }
@@ -52,7 +63,10 @@ class Restaurant extends Place {
   getUrl() {
     const { name, location, cuisine = "" } = this;
     const { latitude: lat, longitude: lng } = location;
-    return `https://www.google.com/maps/search/${encodeURIComponent(cuisine)}+restaurant+near+${encodeURIComponent(name)}/@${lat},${lng},15z`;
+
+    return `https://www.google.com/maps/search/${encodeURIComponent(
+      cuisine
+    )}+restaurant+near+${encodeURIComponent(name)}/@${lat},${lng},15z`;
   }
 }
 
@@ -77,6 +91,7 @@ class MapRoute {
     };
   }
 }
+
 
 const HotelDetails = ({ HotelDetailsPageRef }) => {
   const {
